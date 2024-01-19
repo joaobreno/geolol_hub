@@ -16,7 +16,9 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -64,13 +66,15 @@
                     <p class="text-center small">Digite seu nome de usuário e senha para fazer login.</p>
                   </div>
 
-                  <form action="" class="row g-3 needs-validation" method="post" novalidate>
+
+
+                  <form action="{% url 'account_login' %}" class="row g-3 needs-validation" method="post" novalidate>
                     {% csrf_token %}
                     <div class="col-12">
                       <label for="yourUsername" class="form-label">Username</label>
                       <div class="input-group has-validation">
                         <span class="input-group-text" id="inputGroupPrepend">@</span>
-                        {{form.username}}
+                        {{ form.login }}
                         <div class="invalid-feedback">Please enter your username.</div>
                       </div>
                     </div>
@@ -83,7 +87,7 @@
 
                     <div class="col-12">
                       <div class="form-check">
-                        {{form.remember_me}}
+                        {{form.remember}}
                         <label class="form-check-label" for="rememberMe">Lembrar-me</label>
                       </div>
                     </div>
@@ -110,7 +114,8 @@
     </div>
   </main><!-- End #main -->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
   <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
