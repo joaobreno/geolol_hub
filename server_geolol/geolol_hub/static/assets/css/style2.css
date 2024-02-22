@@ -1,0 +1,111 @@
+.match-content{
+    min-height: 96px;
+}
+
+.match-tab-result{
+    width: 108px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 8px;
+    color: var(--gray500);
+}
+
+.champion-match-data{
+    display: flex;
+    flex-direction: column;
+    -moz-box-pack: start;
+    justify-content: flex-start;
+    height: 100%;
+    gap: 2px;
+    flex: 1 1 0%;
+}
+
+.champion-match-info{
+    display: flex;
+    -moz-box-align: center;
+    align-items: flex-start;
+    gap: 4px;
+    height: 55px;
+}
+
+.champion-level{
+    display: flex;
+    width: 20px;
+    height: 20px;
+    -moz-box-pack: center;
+    justify-content: center;
+    -moz-box-align: center;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 14px;
+    color: rgb(255, 255, 255);
+    background: rgb(32, 45, 55);
+    border-radius: 50%;
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+}
+
+.container{
+    width: 1000px;
+}
+
+.loadout-group{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.loadout-group .spell {
+    display: flex;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.loadout-group .rune {
+    display: flex;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.summoner-loadout{
+    display: flex;
+    margin-left: 55px;
+}
+
+.kda-stats{
+    margin-left: 10px;
+}
+
+.kda{
+    color: var(--gray400);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 22px;
+}
+
+.champion-build{
+    display: flex;
+    -moz-box-align: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.match-item img{
+    display: flex;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 0.35rem;
+}
+
+.empty-item{
+    overflow: hidden;
+    border-radius: 4px;
+    background: #FFBAC3;
+    min-width: 22px;
+    height: 22px;
+}
