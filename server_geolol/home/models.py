@@ -8,8 +8,38 @@ class Invocador(models.Model):
     tag = models.CharField(max_length=10, blank=True)
     profile_icon = models.CharField(max_length=10, blank=True)
     puuid = models.CharField(max_length=100, blank=True)
-
+    summonerId = models.CharField(max_length=100, blank=True)
+    level = models.IntegerField(blank=True, default=0)
     # Adicione outros atributos conforme necessário
 
     def __str__(self):
         return self.user.username
+    
+
+class Ranks(models.Model):
+    summoner = models.ForeignKey(Invocador, on_delete=models.CASCADE)
+
+    # RANKED_SOLO_5x5
+    soloqueue_tier = models.CharField(max_length=20, blank=True)
+    soloqueue_rank = models.CharField(max_length=5, blank=True)
+    soloqueue_leaguePoints = models.IntegerField(blank=True)
+    soloqueue_wins = models.IntegerField(blank=True)
+    soloqueue_losses = models.IntegerField(blank=True)
+
+    # RANKED_FLEX_SR
+    flexqueue_tier = models.CharField(max_length=20, blank=True)
+    flexqueue_rank = models.CharField(max_length=5, blank=True)
+    flexqueue_leaguePoints = models.IntegerField(blank=True)
+    flexqueue_wins = models.IntegerField(blank=True)
+    flexqueue_losses = models.IntegerField(blank=True)
+
+    def __str__(self):
+        return self.summoner.user.username
+    
+    @property
+    def solo_winrate(self):
+        return "{:.0f}%".format((self.soloqueue_wins / (self.soloqueue_losses + self.soloqueue_wins )) * 100)
+    
+    @property
+    def flex_winrate(self):
+        return "{:.0f}%".format((self.flexqueue_wins / (self.flexqueue_losses + self.flexqueue_wins )) * 100)

@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings 
 import requests
 from .decorator import *
+from .models import *
 
 # Create your views here.
 
@@ -16,7 +17,8 @@ def index(request):
 def profile(request, context_dict):
     # puuid = get_summoner('Bentinho','6038')
     # data_match = get_data_match('BR1_2891213898')
-    context_dict['icon'] = request.user.invocador.profile_icon
+    tier_data = get_object_or_404(Ranks, summoner=context_dict['user'].invocador.id)
+    context_dict['tiers'] = tier_data
     return render(request, 'users-profile.html', context_dict)
 
 
