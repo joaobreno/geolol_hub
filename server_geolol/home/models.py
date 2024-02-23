@@ -10,6 +10,7 @@ class Invocador(models.Model):
     puuid = models.CharField(max_length=100, blank=True)
     summonerId = models.CharField(max_length=100, blank=True)
     level = models.IntegerField(blank=True, default=0)
+    summonerName = models.CharField(max_length=50, blank=True)
     # Adicione outros atributos conforme necessário
 
     def __str__(self):
@@ -43,3 +44,15 @@ class Ranks(models.Model):
     @property
     def flex_winrate(self):
         return "{:.0f}%".format((self.flexqueue_wins / (self.flexqueue_losses + self.flexqueue_wins )) * 100)
+    
+class Matches(models.Model):
+    summoner = models.ManyToManyField(Invocador, related_name='+')
+
+    matchID = models.CharField(max_length=20, blank=True)
+    data_json = models.TextField(blank=True)
+    date = models.DateTimeField(blank=True)
+    gameMode = models.CharField(max_length=20, blank=True)
+    gameVersion = models.CharField(max_length=20, blank=True)
+
+    def __str__(self):
+        return self.matchID

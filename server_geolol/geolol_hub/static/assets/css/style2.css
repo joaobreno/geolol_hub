@@ -1,5 +1,6 @@
 .match-content{
     min-height: 96px;
+    padding: 10px 20px;
 }
 
 .match-tab-result{
@@ -21,6 +22,7 @@
     height: 100%;
     gap: 2px;
     flex: 1 1 0%;
+    max-width: 350px;
 }
 
 .champion-match-info{
@@ -29,6 +31,7 @@
     align-items: flex-start;
     gap: 4px;
     height: 55px;
+    max-width: 300px;
 }
 
 .champion-level{
@@ -108,4 +111,44 @@
     background: #FFBAC3;
     min-width: 22px;
     height: 22px;
+}
+
+.quick-game-stats{
+    position: absolute;
+    margin-left: 210px;
+    border-left-width: 1px;
+    border-left-style: solid;
+    border-color: #D5E3FF;
+    padding-left: 15px;
+}
+
+.quick-game-stats div{
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 14px;
+}
+
+.match-participants{
+    display: flex;
+    flex-flow: column wrap;
+    gap: 2px 8px;
+    max-height: 120px;
+    width: 168px;
+}
+
+.match-participant-data{
+    display: flex;
+    -moz-box-align: center;
+    align-items: center;
+    gap: 4px;
+    color: #758592;
+    width: 130px;
+}
+
+.name{
+    max-width: 60px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: flex;
 }

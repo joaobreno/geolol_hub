@@ -11,3 +11,8 @@ class RanksAdmin(admin.ModelAdmin):
     list_display = ['summoner', 'soloqueue_tier', 'soloqueue_rank', 'flexqueue_tier', 'flexqueue_rank']
 
 admin.site.register(Ranks, RanksAdmin)
+
+class MatchesAdmin(admin.ModelAdmin):
+    list_display = ['matchID', 'gameMode', 'gameVersion']
+
+admin.site.register(Matches, MatchesAdmin)
