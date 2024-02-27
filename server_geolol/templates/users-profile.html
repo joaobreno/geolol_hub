@@ -147,59 +147,55 @@
                       aria-controls="collapseTwo"
                     >
                       <div class="match-tab-result">
-                        Ranqueada Solo
-                        <div style="position: relative" class="">há 5 dias</div>
+                        {{match.type_queue}}
+                        <div style="position: relative" class="">há {{match.str_match_timeago}} dias</div>
                         <hr style="margin: 0.15rem 0; max-width: 43px" />
-                        <div class="result">Vitória</div>
-                        <div class="length">15:39</div>
+                        <div class="result">{{match.str_gameResult}}</div>
+                        <div class="length">{{match.str_gameDuration}}</div>
                       </div>
 
                       <div class="champion-match-data">
                         <div class="champion-match-info">
                           <div style="position: absolute">
                             <img
-                              src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/{{ match.info.participants.0.championName }}.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015"
+                              src="https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/{{match.mainSummoner.championName}}.png"
                               width="48"
                               height="48"
                               alt="Fizz"
                               class="rounded-circle"
                             />
-                            <span class="champion-level">17</span>
+                            <span class="champion-level">{{match.mainSummoner.champLevel}}</span>
                           </div>
                           <div class="summoner-loadout">
                             <div class="loadout-group">
                               <div style="position: relative" class="spell">
                                 <img
-                                  src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/spell/SummonerDot.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
+                                  src="https://ddragon.leagueoflegends.com/cdn/14.3.1/img/spell/{{match.spellD_icon}}.png"
                                   width="22"
                                   height="22"
-                                  alt="Incendiar"
                                 />
                               </div>
                               <div style="position: relative" class="spell">
                                 <img
-                                  src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/spell/SummonerFlash.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
+                                  src="https://ddragon.leagueoflegends.com/cdn/14.3.1/img/spell/{{match.spellF_icon}}.png"
                                   width="22"
                                   height="22"
-                                  alt="Flash"
                                 />
                               </div>
                             </div>
                             <div class="loadout-group">
                               <div style="position: relative" class="rune">
                                 <img
-                                  src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/perk/8112.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
+                                  src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/perk/{{match.mainRuneKeystone}}.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
                                   width="22"
                                   height="22"
-                                  alt="Eletrocutar"
                                 />
                               </div>
                               <div style="position: relative" class="rune">
                                 <img
-                                  src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/perkStyle/8200.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
-                                  width="22"
-                                  height="22"
-                                  alt="Feitiçaria"
+                                  src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/perkStyle/{{match.mainRuneSubStyle}}.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
+                                  width="18"
+                                  height="18"
                                 />
                               </div>
                             </div>
@@ -207,11 +203,11 @@
 
                           <div class="kda-stats">
                             <div class="kda">
-                              <span>19</span> /
-                              <span class="text-danger">5</span> /
-                              <span>6</span>
+                              <span>{{match.mainKDA.kills}}</span> /
+                              <span class="text-danger">{{match.mainKDA.deaths}}</span> /
+                              <span>{{match.mainKDA.assists}}</span>
                             </div>
-                            <div class="kda-ratio">5.00 KDA</div>
+                            <div class="kda-ratio">{{match.kda_ratio}} KDA</div>
                           </div>
                         </div>
                         <div class="champion-build">
@@ -424,6 +420,8 @@
                   </div>
                 </div>
               </div>
+              <br>
+
               <!-- End Default Accordion Example -->
 
               <!-- <h5 class="card-title">About</h5>

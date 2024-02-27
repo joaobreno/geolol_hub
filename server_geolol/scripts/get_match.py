@@ -31,7 +31,7 @@ if response.status_code == 200:
     match = Matches.objects.create(
         matchID=matchID,
         data_json = response.text,
-        date=datetime.datetime.now(),
+        date=datetime.datetime.fromtimestamp(match_info['info']['gameEndTimestamp'] / 1000.0),
         gameMode=match_info['info']['gameMode'],
         gameVersion=match_info['info']['gameVersion']
     )
