@@ -25,11 +25,16 @@ def profile(request, context_dict):
     context_dict['tiers'] = tier_data
 
 
-    match = Matches.objects.all().first()
-    context_dict['match'] = SummonerMatch('BR1_2891213898', context_dict['user'].invocador.puuid)
+    matches = Matches.objects.all()
+    matches_data = []
+    for match in matches:
+        matches_data.append(SummonerMatch(match.matchID, context_dict['user'].invocador.puuid))
+
+
+    context_dict['matches'] = matches_data
 
     # cass.set_riot_api_key("")
-    summoner = cass.get_summoner(name="The Bentin", region="BR")
+    # summoner = cass.get_summoner(name="The Bentin", region="BR")
 
 
     return render(request, 'users-profile.html', context_dict)
@@ -85,6 +90,8 @@ class SummonerMatch:
                 self.mainKDA = {'kills': participant['kills'], 'deaths': participant['deaths'], 'assists': participant['assists']}
                 self.teamID = participant['teamId']
                 self.visionScore = participant['visionScore']
+                self.mainSummonerItems = [participant['item0'], participant['item1'], participant['item2'], participant['item3'], participant['item4'], participant['item5']]
+                self.mainSummonerTrinket = participant['item6']
                 if participant['teamId'] == 100 and data['info']['teams'][0]['win']:
                     self.mainResult = True
                 else:
@@ -96,6 +103,7 @@ class SummonerMatch:
         self.gameEndTime = datetime.datetime.fromtimestamp(data['info']['gameEndTimestamp'] / 1000.0)
         self.gameDuration = data['info']['gameDuration']
         self.queueId = data['info']['queueId']
+        self.id = match.id
 
 
 

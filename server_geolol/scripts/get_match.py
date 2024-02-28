@@ -3,8 +3,8 @@ import requests
 import datetime
 
 
-matchID = 'BR1_2891213898'
-key = 'RGAPI-6a7b9ebd-674a-4f54-8ff8-236589013e6b'
+matchID = 'BR1_2897975546'
+key = ''
 url = f'https://americas.api.riotgames.com/lol/match/v5/matches/{matchID}?api_key={key}'
 
 response = requests.get(url)

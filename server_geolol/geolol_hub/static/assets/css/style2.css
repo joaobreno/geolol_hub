@@ -134,6 +134,7 @@
     gap: 2px 8px;
     max-height: 120px;
     width: 168px;
+    margin-left: 60px;
 }
 
 .match-participant-data{
@@ -151,4 +152,12 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     display: flex;
+}
+
+.match-victory{
+    background-color: #ECF2FF;
+}
+
+.match-defeat{
+    background-color: #FFF1F3;
 }

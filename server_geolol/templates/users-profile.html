@@ -135,19 +135,20 @@
               class="tab-pane fade show active profile-overview"
               id="profile-overview"
             >
+            {% for match in matches %}
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
-                  <h2 class="accordion-header" id="headingTwo">
+                  <h2 class="accordion-header" id="headingMatch-{{match.id}}">
                     <button
-                      class="accordion-button collapsed match-content"
+                      class="accordion-button collapsed match-content {% if match.mainResult %}match-victory{% else %}match-defeat{% endif %}"
                       type="button"
                       data-bs-toggle="collapse"
-                      data-bs-target="#collapseTwo"
+                      data-bs-target="#collapseMatch-{{match.id}}"
                       aria-expanded="false"
-                      aria-controls="collapseTwo"
+                      aria-controls="collapseMatch-{{match.id}}"
                     >
                       <div class="match-tab-result">
-                        {{match.type_queue}}
+                        <b>{{match.type_queue}}</b>
                         <div style="position: relative" class="">há {{match.str_match_timeago}} dias</div>
                         <hr style="margin: 0.15rem 0; max-width: 43px" />
                         <div class="result">{{match.str_gameResult}}</div>
@@ -211,53 +212,30 @@
                           </div>
                         </div>
                         <div class="champion-build">
-                          <dd>
-                            <div style="position: relative" class="match-item">
-                              <img
-                                src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/item/1056.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
-                                width="22"
-                                height="22"
-                                alt="Anel de Doran"
-                              />
-                            </div>
-                          </dd>
-                          <dd>
-                            <div style="position: relative" class="match-item">
-                              <img
-                                src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/item/3100.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
-                              />
-                            </div>
-                          </dd>
-                          <dd>
-                            <div style="position: relative" class="match-item">
-                              <img
-                                src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/item/4646.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
-                              />
-                            </div>
-                          </dd>
-                          <dd>
-                            <div style="position: relative" class="match-item">
-                              <img
-                                src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/item/3020.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
-                              />
-                            </div>
-                          </dd>
-                          <dd>
-                            <div style="position: relative" class="match-item">
-                              <img
-                                src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/item/3102.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
-                              />
-                            </div>
-                          </dd>
-                          <dd class="empty-item"></dd>
+                          {% for item in match.mainSummonerItems %}
+                            {% if item != 0 %}
+                              <dd>
+                                <div style="position: relative" class="match-item">
+                                  <img
+                                    src="https://ddragon.leagueoflegends.com/cdn/14.4.1/img/item/{{item}}.png"
+                                    width="22"
+                                    height="22"
+                                  />
+                                </div>
+                              </dd>
+                            {% else %}
+                              <dd class="empty-item"></dd>
+                            {% endif %}
+                          {% endfor %}
                           <dd class="trinket">
                             <div style="position: relative" class="match-item">
                               <img
-                                src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/item/3340.png?image=q_auto,f_webp,w_64,h_64&amp;v=1708507553015"
+                                src="https://ddragon.leagueoflegends.com/cdn/14.4.1/img/item/{{match.mainSummonerTrinket}}.png"
                                 class="rounded-circle"
                               />
                             </div>
                           </dd>
+
                         </div>
 
                         <div class="quick-game-stats">
@@ -276,151 +254,54 @@
                       </div>
 
                       <div class="match-participants">
+                        {% for participant in match.blue_side.participants %}
                         <div class="match-participant-data">
                           <div style="position: relative" class="icon">
-                            <img src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/Smolder.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015" width="16" height="16" alt="Smolder" />
+                            <img src="https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/{{participant.championName}}.png" width="16" height="16" alt="Smolder" />
                           </div>
                           <div class="name">
                             <div style="position: relative" class="summoner-tooltip">
                               <div class="">
-                                <span style="font-size: 12px;line-height: 16px;">valter</span>
+                                <span style="font-size: 12px;line-height: 16px;">{{participant.riotIdGameName}}</span>
                               </div>
                             </div>
                           </div>
                         </div>
+                        {% endfor %}
+
+                        {% for participant in match.red_side.participants %}
                         <div class="match-participant-data">
                           <div style="position: relative" class="icon">
-                            <img src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/Smolder.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015" width="16" height="16" alt="Smolder" />
+                            <img src="https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/{{participant.championName}}.png" width="16" height="16" alt="Smolder" />
                           </div>
                           <div class="name">
                             <div style="position: relative" class="summoner-tooltip">
                               <div class="">
-                                <span style="font-size: 12px;line-height: 16px;">valter</span>
+                                <span style="font-size: 12px;line-height: 16px;">{{participant.riotIdGameName}}</span>
                               </div>
                             </div>
                           </div>
                         </div>
-                        <div class="match-participant-data">
-                          <div style="position: relative" class="icon">
-                            <img src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/Smolder.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015" width="16" height="16" alt="Smolder" />
-                          </div>
-                          <div class="name">
-                            <div style="position: relative" class="summoner-tooltip">
-                              <div class="">
-                                <span style="font-size: 12px;line-height: 16px;">valter</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="match-participant-data">
-                          <div style="position: relative" class="icon">
-                            <img src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/Smolder.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015" width="16" height="16" alt="Smolder" />
-                          </div>
-                          <div class="name">
-                            <div style="position: relative" class="summoner-tooltip">
-                              <div class="">
-                                <span style="font-size: 12px;line-height: 16px;">valter</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="match-participant-data">
-                          <div style="position: relative" class="icon">
-                            <img src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/Smolder.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015" width="16" height="16" alt="Smolder" />
-                          </div>
-                          <div class="name">
-                            <div style="position: relative" class="summoner-tooltip">
-                              <div class="">
-                                <span style="font-size: 12px;line-height: 16px;">valter</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="match-participant-data">
-                          <div style="position: relative" class="icon">
-                            <img src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/Smolder.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015" width="16" height="16" alt="Smolder" />
-                          </div>
-                          <div class="name">
-                            <div style="position: relative" class="summoner-tooltip">
-                              <div class="">
-                                <span style="font-size: 12px;line-height: 16px;">valter</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="match-participant-data">
-                          <div style="position: relative" class="icon">
-                            <img src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/Smolder.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015" width="16" height="16" alt="Smolder" />
-                          </div>
-                          <div class="name">
-                            <div style="position: relative" class="summoner-tooltip">
-                              <div class="">
-                                <span style="font-size: 12px;line-height: 16px;">valter</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="match-participant-data">
-                          <div style="position: relative" class="icon">
-                            <img src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/Smolder.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015" width="16" height="16" alt="Smolder" />
-                          </div>
-                          <div class="name">
-                            <div style="position: relative" class="summoner-tooltip">
-                              <div class="">
-                                <span style="font-size: 12px;line-height: 16px;">valter</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="match-participant-data">
-                          <div style="position: relative" class="icon">
-                            <img src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/Smolder.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015" width="16" height="16" alt="Smolder" />
-                          </div>
-                          <div class="name">
-                            <div style="position: relative" class="summoner-tooltip">
-                              <div class="">
-                                <span style="font-size: 12px;line-height: 16px;">valter</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="match-participant-data">
-                          <div style="position: relative" class="icon">
-                            <img src="https://opgg-static.akamaized.net/meta/images/lol/14.4.1/champion/Smolder.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_160,h_160&amp;v=1708507553015" width="16" height="16" alt="Smolder" />
-                          </div>
-                          <div class="name">
-                            <div style="position: relative" class="summoner-tooltip">
-                              <div class="">
-                                <span style="font-size: 12px;line-height: 16px;">valter</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        {% endfor %}
+                        
 
                       </div>
                     </button>
                   </h2>
                   <div
-                    id="collapseTwo"
+                    id="collapseMatch-{{match.id}}"
                     class="accordion-collapse collapse"
-                    aria-labelledby="headingTwo"
+                    aria-labelledby="headingMatch-{{match.id}}"
                     data-bs-parent="#accordionExample"
                   >
                     <div class="accordion-body">
-                      <strong>This is the second item's accordion body.</strong>
-                      It is hidden by default, until the collapse plugin adds
-                      the appropriate classes that we use to style each element.
-                      These classes control the overall appearance, as well as
-                      the showing and hiding via CSS transitions. You can modify
-                      any of this with custom CSS or overriding our default
-                      variables. It's also worth noting that just about any HTML
-                      can go within the <code>.accordion-body</code>, though the
-                      transition does limit overflow.
+                      <strong>STATS IN DEVELOPMENT</strong>
                     </div>
                   </div>
                 </div>
               </div>
               <br>
+            {% endfor %}
 
               <!-- End Default Accordion Example -->
 
