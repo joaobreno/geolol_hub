@@ -263,13 +263,13 @@
                         <div class="quick-game-stats">
                           <div class="p-kill text-danger">
                             <div style="position: relative" class="">
-                              P/Kill 46%
+                              P/Kill {{match.kill_presence}}
                             </div>
                           </div>
-                          <div class="ward">Control Ward 0</div>
+                          <div class="ward">Vision Score {{match.visionScore}}</div>
                           <div class="cs">
                             <div style="position: relative" class="">
-                              CS 85 (5.6)
+                              CS {{match.mainSummoner.totalMinionsKilled}} ({{match.cs_per_minute}})
                             </div>
                           </div>
                         </div>

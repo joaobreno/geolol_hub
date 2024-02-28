@@ -70,26 +70,29 @@ class SummonerMatch:
     def __init__(self, match_id, puuid):
         match = get_object_or_404(Matches, matchID=match_id)
         data = json.loads(match.data_json)
-        blue_side = []
-        red_side = []
+        blue_side_participants = []
+        red_side_participants = []
         for index, participant in enumerate(data['info']['participants']):
             if participant['teamId'] == 100:
-                blue_side.append(participant)
+                blue_side_participants.append(participant)
             if participant['teamId'] == 200:
-                red_side.append(participant)
+                red_side_participants.append(participant)
             if participant['puuid'] == puuid:
                 self.mainSummoner = participant
                 self.mainSpells = {'spellD': participant['summoner1Id'], 'spellF': participant['summoner2Id']}
                 self.mainRuneKeystone = participant['perks']['styles'][0]['selections'][0]['perk']
                 self.mainRuneSubStyle = participant['perks']['styles'][1]['style']
                 self.mainKDA = {'kills': participant['kills'], 'deaths': participant['deaths'], 'assists': participant['assists']}
+                self.teamID = participant['teamId']
+                self.visionScore = participant['visionScore']
                 if participant['teamId'] == 100 and data['info']['teams'][0]['win']:
                     self.mainResult = True
                 else:
                     self.mainResult = False
 
-        self.blue_side = blue_side
-        self.red_side = red_side
+        self.blue_side = {'participants': blue_side_participants, 'data': data['info']['teams'][0]}
+        self.red_side = {'participants': red_side_participants, 'data': data['info']['teams'][1]}
+        self.gameStartTime = datetime.datetime.fromtimestamp(data['info']['gameStartTimestamp'] / 1000.0)
         self.gameEndTime = datetime.datetime.fromtimestamp(data['info']['gameEndTimestamp'] / 1000.0)
         self.gameDuration = data['info']['gameDuration']
         self.queueId = data['info']['queueId']
@@ -129,3 +132,13 @@ class SummonerMatch:
     def kda_ratio(self):
         kda_ratio = (self.mainKDA['kills'] + self.mainKDA['assists']) / self.mainKDA['deaths']
         return '{:.2f}'.format(kda_ratio)
+
+    def kill_presence(self):
+        team = self.blue_side if self.teamID == 100 else self.red_side
+        kp = ((self.mainKDA['kills'] + self.mainKDA['assists']) / (team['data']['objectives']['champion']['kills'])) * 100
+        return '{:.0f}%'.format(kp)
+    
+    def cs_per_minute(self):
+        time = self.gameEndTime - self.gameStartTime
+        cs = self.mainSummoner['totalMinionsKilled'] / (time.seconds / 60)
+        return '{:.1f}'.format(cs) 
