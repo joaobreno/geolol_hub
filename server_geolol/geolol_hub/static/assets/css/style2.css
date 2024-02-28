@@ -155,9 +155,9 @@
 }
 
 .match-victory{
-    background-color: #ECF2FF;
+    background-color: #ECF2FF !important;
 }
 
 .match-defeat{
-    background-color: #FFF1F3;
+    background-color: #FFF1F3 !important;
 }
