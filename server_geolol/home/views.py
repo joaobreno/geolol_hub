@@ -10,6 +10,7 @@ import cassiopeia as cass
 import arrow
 import datetime
 import json
+from riot_admin import models
 
 # Create your views here.
 
