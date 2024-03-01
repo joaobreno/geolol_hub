@@ -11,6 +11,7 @@ import arrow
 import datetime
 import json
 from riot_admin import models
+from .task import *
 
 # Create your views here.
 
@@ -36,7 +37,7 @@ def profile(request, context_dict):
 
     # cass.set_riot_api_key("")
     # summoner = cass.get_summoner(name="The Bentin", region="BR")
-
+    print_test.delay()
 
     return render(request, 'users-profile.html', context_dict)
 
