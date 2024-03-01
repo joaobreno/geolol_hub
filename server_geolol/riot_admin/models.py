@@ -3,6 +3,7 @@ from django.db import models
 
 class AdminSet(models.Model):
     riot_api_key = models.CharField(max_length=100)
+    status_key = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk and AdminSet.objects.exists():
