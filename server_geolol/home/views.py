@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import *
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings 
 import requests
@@ -12,6 +12,7 @@ import datetime
 import json
 from riot_admin import models
 from .task import *
+from celery import shared_task
 
 # Create your views here.
 
@@ -27,7 +28,7 @@ def profile(request, context_dict):
     context_dict['tiers'] = tier_data
 
 
-    matches = Matches.objects.all()
+    matches = Matches.objects.filter(summoner=context_dict['user'].invocador.id)
     matches_data = []
     for match in matches:
         matches_data.append(SummonerMatch(match.matchID, context_dict['user'].invocador.puuid))
@@ -71,6 +72,10 @@ def get_summoner(summoner_name, summoner_tag):
 
     return summoner_puuid
 
+
+def refresh_summoner(request):
+    task_refresh_summoner_async.delay(request.GET.get('id'))
+    return JsonResponse({'response': 'OK'})
 
 
 class SummonerMatch:
@@ -152,3 +157,29 @@ class SummonerMatch:
         time = self.gameEndTime - self.gameStartTime
         cs = self.mainSummoner['totalMinionsKilled'] / (time.seconds / 60)
         return '{:.1f}'.format(cs) 
+    
+
+
+
+
+
+@shared_task(name="task_refresh_summoner_async", bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 0, 'countdown': 120})
+def task_refresh_summoner_async(self, summoner_id):
+    summoner = Invocador.objects.get(pk=int(summoner_id))
+    server_settings = AdminSet.objects.all().first()
+
+    base_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{summoner.puuid}/ids'
+
+    params = {
+        "api_key": server_settings.riot_api_key,
+        "startTime": 1704067200,
+        "queue": 420
+    }
+
+    response = requests.get(base_url, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        print(data)
+    else:
+        print(f"Erro na requisição: {response.status_code}")

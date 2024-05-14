@@ -26,6 +26,7 @@
           <h2>{{user.invocador.nome_invocador}} #{{user.invocador.tag}}</h2>
           <h3>Level {{user.invocador.level}}</h3>
           <!-- <h6>{{user.first_name}}</h6> -->
+          <button type="button" class="btn btn-info" onclick="refresh_summoner({{user.invocador.id}})">Refresh</button>
         </div>
       </div>
 
@@ -709,4 +710,22 @@ Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Temp
     <div class="col-xl-3"></div>
   </div>
 </section>
+
+<script type="text/javascript">
+  function refresh_summoner(id) {
+      $.ajax({
+          type: 'GET',
+          data: { 'id': id },
+          url: "{% url 'profile-refresh' %}",
+          success: function (data) {
+              console.log(data['response']);
+          },
+          error: function (xhr, status, error) {
+              console.error('Erro na solicitação:', status, error);
+          }
+      });
+  }
+</script>
+
+
 {% endblock %}
