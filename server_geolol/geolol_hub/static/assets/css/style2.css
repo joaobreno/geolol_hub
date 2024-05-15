@@ -105,10 +105,26 @@
     border-radius: 0.35rem;
 }
 
-.empty-item{
+.empty-item-defeat{
     overflow: hidden;
     border-radius: 4px;
     background: #FFBAC3;
+    min-width: 22px;
+    height: 22px;
+}
+
+.empty-item-victory{
+    overflow: hidden;
+    border-radius: 4px;
+    background: #B3CDFF;
+    min-width: 22px;
+    height: 22px;
+}
+
+.empty-item-remake{
+    overflow: hidden;
+    border-radius: 4px;
+    background: #C3CBD1;
     min-width: 22px;
     height: 22px;
 }
@@ -160,4 +176,8 @@
 
 .match-defeat{
     background-color: #FFF1F3 !important;
+}
+
+.match-remake{
+    background-color: #ebeef1 !important;
 }

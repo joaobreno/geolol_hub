@@ -28,7 +28,7 @@ def profile(request, context_dict):
     context_dict['tiers'] = tier_data
 
 
-    matches = Matches.objects.filter(summoner=context_dict['user'].invocador.id)
+    matches = Matches.objects.filter(summoner=context_dict['user'].invocador.id).order_by('-date')
     matches_data = []
     for match in matches:
         matches_data.append(SummonerMatch(match.matchID, context_dict['user'].invocador.puuid))
@@ -36,9 +36,6 @@ def profile(request, context_dict):
 
     context_dict['matches'] = matches_data
 
-    # cass.set_riot_api_key("")
-    # summoner = cass.get_summoner(name="The Bentin", region="BR")
-    print_test.delay()
 
     return render(request, 'users-profile.html', context_dict)
 
@@ -85,6 +82,7 @@ class SummonerMatch:
         blue_side_participants = []
         red_side_participants = []
         for index, participant in enumerate(data['info']['participants']):
+            participant = self.correction_api_gg_endpoints(participant)
             if participant['teamId'] == 100:
                 blue_side_participants.append(participant)
             if participant['teamId'] == 200:
@@ -99,10 +97,11 @@ class SummonerMatch:
                 self.visionScore = participant['visionScore']
                 self.mainSummonerItems = [participant['item0'], participant['item1'], participant['item2'], participant['item3'], participant['item4'], participant['item5']]
                 self.mainSummonerTrinket = participant['item6']
-                if participant['teamId'] == 100 and data['info']['teams'][0]['win']:
-                    self.mainResult = True
-                else:
-                    self.mainResult = False
+                self.remakeStatus = participant['gameEndedInEarlySurrender']
+                if self.teamID == 100:
+                    self.mainResult = data['info']['teams'][0]['win']
+                elif self.teamID == 200:
+                    self.mainResult = data['info']['teams'][1]['win']
 
         self.blue_side = {'participants': blue_side_participants, 'data': data['info']['teams'][0]}
         self.red_side = {'participants': red_side_participants, 'data': data['info']['teams'][1]}
@@ -124,7 +123,10 @@ class SummonerMatch:
         return time.days
     
     def str_gameResult(self):
-        return 'Vitória' if self.mainResult else 'Derrota'
+        if not self.remakeStatus:
+            return 'Vitória' if self.mainResult else 'Derrota'
+        else:
+            return 'Remake'
     
     def type_queue(self):
         type_dict = {
@@ -145,18 +147,24 @@ class SummonerMatch:
             return settings.ICON_SPELL_DICT[self.mainSpells['spellF']]
         
     def kda_ratio(self):
-        kda_ratio = (self.mainKDA['kills'] + self.mainKDA['assists']) / self.mainKDA['deaths']
+        kda_ratio = (self.mainKDA['kills'] + self.mainKDA['assists']) / (self.mainKDA['deaths'] if self.mainKDA['deaths'] != 0 else 1)
         return '{:.2f}'.format(kda_ratio)
 
     def kill_presence(self):
         team = self.blue_side if self.teamID == 100 else self.red_side
-        kp = ((self.mainKDA['kills'] + self.mainKDA['assists']) / (team['data']['objectives']['champion']['kills'])) * 100
+        kp = ((self.mainKDA['kills'] + self.mainKDA['assists']) / (team['data']['objectives']['champion']['kills'] if team['data']['objectives']['champion']['kills'] != 0 else 1)) * 100
         return '{:.0f}%'.format(kp)
     
     def cs_per_minute(self):
         time = self.gameEndTime - self.gameStartTime
         cs = self.mainSummoner['totalMinionsKilled'] / (time.seconds / 60)
-        return '{:.1f}'.format(cs) 
+        return '{:.1f}'.format(cs)
+
+    def correction_api_gg_endpoints(self, data):
+        if data['championName'] == 'FiddleSticks':
+            data['championName'] = 'Fiddlesticks'
+        return data
+
     
 
 
@@ -180,6 +188,62 @@ def task_refresh_summoner_async(self, summoner_id):
 
     if response.status_code == 200:
         data = response.json()
-        print(data)
+        for matchID in data:
+            match_lib = Matches.objects.filter(matchID=matchID)
+            if not match_lib:
+                match_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/{matchID}?api_key={server_settings.riot_api_key}'
+                match_response = requests.get(match_url)
+                if match_response.status_code == 200:
+                    print('{0} request status={1}'.format(matchID, match_response.status_code))
+                    match_info = match_response.json()
+
+                    match = Matches.objects.create(
+                        matchID=matchID,
+                        data_json = match_response.text,
+                        date=datetime.datetime.fromtimestamp(match_info['info']['gameEndTimestamp'] / 1000.0),
+                        gameMode=match_info['info']['gameMode'],
+                        gameVersion=match_info['info']['gameVersion']
+                    )
+
+                    # Adicione o Invocador à partida usando o método add()
+                    match.summoner.add(summoner)
+            else:
+                print('{0} already registered'.format(matchID))
+
+    else:
+        print(f"Erro na requisição: {response.status_code}")
+
+    params = {
+        "api_key": server_settings.riot_api_key,
+        "startTime": 1704067200,
+        "queue": 440
+    }
+
+    response = requests.get(base_url, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        for matchID in data:
+            match_lib = Matches.objects.filter(matchID=matchID)
+            if not match_lib:
+                match_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/{matchID}?api_key={server_settings.riot_api_key}'
+                match_response = requests.get(match_url)
+                if match_response.status_code == 200:
+                    print('{0} request status={1}'.format(matchID, match_response.status_code))
+                    match_info = match_response.json()
+
+                    match = Matches.objects.create(
+                        matchID=matchID,
+                        data_json = match_response.text,
+                        date=datetime.datetime.fromtimestamp(match_info['info']['gameEndTimestamp'] / 1000.0),
+                        gameMode=match_info['info']['gameMode'],
+                        gameVersion=match_info['info']['gameVersion']
+                    )
+
+                    # Adicione o Invocador à partida usando o método add()
+                    match.summoner.add(summoner)
+            else:
+                print('{0} already registered'.format(matchID))
+
     else:
         print(f"Erro na requisição: {response.status_code}")

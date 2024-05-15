@@ -140,7 +140,7 @@
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingMatch-{{match.id}}">
                     <button
-                      class="accordion-button collapsed match-content {% if match.mainResult %}match-victory{% else %}match-defeat{% endif %}"
+                      class="accordion-button collapsed match-content {% if match.remakeStatus %}match-remake{% else %}{% if match.mainResult %}match-victory{% else %}match-defeat{% endif %}{% endif %}"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#collapseMatch-{{match.id}}"
@@ -224,7 +224,7 @@
                                 </div>
                               </dd>
                             {% else %}
-                              <dd class="empty-item"></dd>
+                              <dd class="empty-item-{% if match.remakeStatus %}remake{% else %}{% if match.mainResult %}victory{% else %}defeat{% endif %}{% endif %}"></dd>
                             {% endif %}
                           {% endfor %}
                           <dd class="trinket">
@@ -257,7 +257,7 @@
                         {% for participant in match.blue_side.participants %}
                         <div class="match-participant-data">
                           <div style="position: relative" class="icon">
-                            <img src="https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/{{participant.championName}}.png" width="16" height="16" alt="Smolder" />
+                            <img src="https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/{{participant.championName}}.png" width="16" height="16" alt="{{participant.championName}}" />
                           </div>
                           <div class="name">
                             <div style="position: relative" class="summoner-tooltip">
@@ -272,7 +272,7 @@
                         {% for participant in match.red_side.participants %}
                         <div class="match-participant-data">
                           <div style="position: relative" class="icon">
-                            <img src="https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/{{participant.championName}}.png" width="16" height="16" alt="Smolder" />
+                            <img src="https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/{{participant.championName}}.png" width="16" height="16" alt="{{participant.championName}}" />
                           </div>
                           <div class="name">
                             <div style="position: relative" class="summoner-tooltip">
