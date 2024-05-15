@@ -11,6 +11,8 @@ class Invocador(models.Model):
     summonerId = models.CharField(max_length=100, blank=True)
     level = models.IntegerField(blank=True, default=0)
     summonerName = models.CharField(max_length=50, blank=True)
+    last_updated_profile = models.DateTimeField(blank=True, null=True)
+
     # Adicione outros atributos conforme necessário
 
     def __str__(self):

@@ -3,6 +3,8 @@ from django.urls import *
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings 
+from datetime import timedelta
+from django.utils import timezone
 import requests
 from .decorator import *
 from .models import *
@@ -33,9 +35,12 @@ def profile(request, context_dict):
     for match in matches:
         matches_data.append(SummonerMatch(match.matchID, context_dict['user'].invocador.puuid))
 
+    last_update = context_dict['user'].invocador.last_updated_profile
+    current_time = timezone.now()
+    gap_time = current_time - last_update
+    context_dict['block_refresh'] = gap_time <= timedelta(minutes=2)
 
     context_dict['matches'] = matches_data
-
 
     return render(request, 'users-profile.html', context_dict)
 
@@ -72,7 +77,7 @@ def get_summoner(summoner_name, summoner_tag):
 
 def refresh_summoner(request):
     task_refresh_summoner_async.delay(request.GET.get('id'))
-    return JsonResponse({'response': 'OK'})
+    return JsonResponse({'response': datetime.datetime.now()})
 
 
 class SummonerMatch:
@@ -174,6 +179,8 @@ class SummonerMatch:
 @shared_task(name="task_refresh_summoner_async", bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 0, 'countdown': 120})
 def task_refresh_summoner_async(self, summoner_id):
     summoner = Invocador.objects.get(pk=int(summoner_id))
+    summoner.last_updated_profile = datetime.datetime.now()
+    summoner.save()
     server_settings = AdminSet.objects.all().first()
 
     base_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{summoner.puuid}/ids'
