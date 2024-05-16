@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import *
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.conf import settings 
 from datetime import timedelta
@@ -15,6 +15,7 @@ import json
 from riot_admin import models
 from .task import *
 from celery import shared_task
+import hashlib
 
 # Create your views here.
 
@@ -41,6 +42,11 @@ def profile(request, context_dict):
     context_dict['block_refresh'] = gap_time <= timedelta(minutes=2)
 
     context_dict['matches'] = matches_data
+
+    ### Teste
+    data = "joaobreno"
+    hash_object = hashlib.sha256(data.encode())
+    hex_dig = hash_object.hexdigest()
 
     return render(request, 'users-profile.html', context_dict)
 
@@ -169,11 +175,6 @@ class SummonerMatch:
         if data['championName'] == 'FiddleSticks':
             data['championName'] = 'Fiddlesticks'
         return data
-
-    
-
-
-
 
 
 @shared_task(name="task_refresh_summoner_async", bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 0, 'countdown': 120})
