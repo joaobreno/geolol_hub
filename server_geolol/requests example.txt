@@ -1,0 +1,50 @@
+1. /riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}:
+	{
+	    "puuid": "0D0BuUeiJ8njxijc8uf1oac54ANGSQMsG5BTZq-BKQryJgB98OKjQUuCHOMw9UV_zoyV1ocyGqHmlg",
+	    "gameName": "Freitax",
+	    "tagLine": "BR1"
+	}
+
+
+2. /lol/summoner/v4/summoners/by-puuid/{encryptedPUUID}:
+	{
+	    "id": "1VGy4IH2X3gpLXXpimRydF80JCipMVurCc0w80Jld2yZ7w",
+	    "accountId": "v65xRofKU1mFdU_Wfgo70-57J0WxLI9ttaWytNTMxZWk0EU",
+	    "puuid": "05DFZz6OhwJxj20Oqks3YHgE0ZW4BMtmQ4bVkapPcwk5e7yQasKIKd0HSZZPgOkkCPuK5sZlecgOFQ",
+	    "profileIconId": 918,
+	    "revisionDate": 1716005974000,
+	    "summonerLevel": 656
+	}
+
+3. /lol/league/v4/entries/by-summoner/{encryptedSummonerId}:
+	[
+	    {
+		"leagueId": "7c858588-1ab7-4b19-9096-49f53e864c9b",
+		"queueType": "RANKED_FLEX_SR",
+		"tier": "BRONZE",
+		"rank": "I",
+		"summonerId": "Cr4T-oLZraop6RwkeLTq5kVZsMlE5KF6LGo7fSlqRhS0Nw",
+		"leaguePoints": 86,
+		"wins": 9,
+		"losses": 6,
+		"veteran": false,
+		"inactive": false,
+		"freshBlood": true,
+		"hotStreak": false
+	    },
+	    {
+		"leagueId": "b87f3fb1-b205-4b96-ad1e-c52e48e355b5",
+		"queueType": "RANKED_SOLO_5x5",
+		"tier": "PLATINUM",
+		"rank": "II",
+		"summonerId": "Cr4T-oLZraop6RwkeLTq5kVZsMlE5KF6LGo7fSlqRhS0Nw",
+		"leaguePoints": 8,
+		"wins": 7,
+		"losses": 9,
+		"veteran": false,
+		"inactive": false,
+		"freshBlood": true,
+		"hotStreak": false
+	    }
+	]
+
