@@ -1,14 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from riot_admin.models import *
 from geolol_hub.settings import *
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
+from .models import Invocador
 
 def profile_user_data(func):
     def _decorated(request, *args, **kwargs):
-        admin_set = get_object_or_404(AdminSet, pk=1)        
+        admin_set = get_object_or_404(AdminSet, pk=1)
+        try:
+            invocador = request.user.invocador
+        except Invocador.DoesNotExist:
+            invocador = None
+            return redirect("register-summoner")
+        
+
         context_dict = {'user': request.user,
-                        'icon': request.user.invocador.profile_icon,    
+                        'icon': invocador.profile_icon,    
                         'api_key': admin_set.riot_api_key}
         
         if settings.DEBUG == True:

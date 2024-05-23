@@ -6,6 +6,7 @@ from django.conf import settings
 from datetime import timedelta
 from django.utils import timezone
 from home.riot_api import *
+from .forms import *
 import requests
 from .decorator import *
 from .models import *
@@ -22,6 +23,12 @@ import hashlib
 
 def index(request):
     return render(request, 'index.html')
+
+
+@login_required
+def register_summoner(request):
+    form = RegisterSummonerForm()
+    return render(request, 'register-summoner.html', {'form': form})
 
 @login_required
 @profile_user_data
