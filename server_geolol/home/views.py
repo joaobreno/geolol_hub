@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings 
 from datetime import timedelta
 from django.utils import timezone
+from home.riot_api import *
 import requests
 from .decorator import *
 from .models import *
@@ -182,76 +183,8 @@ def task_refresh_summoner_async(self, summoner_id):
     summoner = Invocador.objects.get(pk=int(summoner_id))
     summoner.last_updated_profile = datetime.datetime.now()
     summoner.save()
-    server_settings = AdminSet.objects.all().first()
 
-    base_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{summoner.puuid}/ids'
-
-    params = {
-        "api_key": server_settings.riot_api_key,
-        "startTime": 1704067200,
-        "queue": 420
-    }
-
-    response = requests.get(base_url, params=params)
-
-    if response.status_code == 200:
-        data = response.json()
-        for matchID in data:
-            match_lib = Matches.objects.filter(matchID=matchID)
-            if not match_lib:
-                match_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/{matchID}?api_key={server_settings.riot_api_key}'
-                match_response = requests.get(match_url)
-                if match_response.status_code == 200:
-                    print('{0} request status={1}'.format(matchID, match_response.status_code))
-                    match_info = match_response.json()
-
-                    match = Matches.objects.create(
-                        matchID=matchID,
-                        data_json = match_response.text,
-                        date=datetime.datetime.fromtimestamp(match_info['info']['gameEndTimestamp'] / 1000.0),
-                        gameMode=match_info['info']['gameMode'],
-                        gameVersion=match_info['info']['gameVersion']
-                    )
-
-                    # Adicione o Invocador à partida usando o método add()
-                    match.summoner.add(summoner)
-            else:
-                print('{0} already registered'.format(matchID))
-
-    else:
-        print(f"Erro na requisição: {response.status_code}")
-
-    params = {
-        "api_key": server_settings.riot_api_key,
-        "startTime": 1704067200,
-        "queue": 440
-    }
-
-    response = requests.get(base_url, params=params)
-
-    if response.status_code == 200:
-        data = response.json()
-        for matchID in data:
-            match_lib = Matches.objects.filter(matchID=matchID)
-            if not match_lib:
-                match_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/{matchID}?api_key={server_settings.riot_api_key}'
-                match_response = requests.get(match_url)
-                if match_response.status_code == 200:
-                    print('{0} request status={1}'.format(matchID, match_response.status_code))
-                    match_info = match_response.json()
-
-                    match = Matches.objects.create(
-                        matchID=matchID,
-                        data_json = match_response.text,
-                        date=datetime.datetime.fromtimestamp(match_info['info']['gameEndTimestamp'] / 1000.0),
-                        gameMode=match_info['info']['gameMode'],
-                        gameVersion=match_info['info']['gameVersion']
-                    )
-
-                    # Adicione o Invocador à partida usando o método add()
-                    match.summoner.add(summoner)
-            else:
-                print('{0} already registered'.format(matchID))
-
-    else:
-        print(f"Erro na requisição: {response.status_code}")
+    riot_api = RiotAPI()
+    riot_api.get_summoners_ranked_matches(summoner.puuid, 420)
+    riot_api.get_summoners_ranked_matches(summoner.puuid, 440)
+    
