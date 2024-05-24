@@ -30,6 +30,29 @@ def register_summoner(request):
     form = RegisterSummonerForm()
     return render(request, 'register-summoner.html', {'form': form})
 
+def get_summoner_info_register(request):
+    gamename = request.GET.get('gamename')
+    tagline = request.GET.get('tagline')
+
+    riot_api = RiotAPI()
+    data_puuid = riot_api.search_puuid_by_gamename(gamename, tagline)
+
+    if data_puuid['status_code'] == 200:
+        data_summoner = riot_api.search_summoner_data(data_puuid['puuid'])
+        return JsonResponse({'gamename': gamename, 
+                             'tagline': tagline,
+                             'puuid': data_puuid['puuid'],
+                             'summonerID': data_summoner['summonerID'],
+                             'iconID': data_summoner['iconID'],
+                             'summonerLevel': data_summoner['summonerLevel'],
+                             'status_code': data_summoner['status_code']})
+
+    else:
+        return JsonResponse({'gamename': gamename,
+                             'tagline': tagline,
+                             'puuid': data_puuid['puuid'],
+                             'status_code': data_puuid['status_code']})
+
 @login_required
 @profile_user_data
 def profile(request, context_dict):

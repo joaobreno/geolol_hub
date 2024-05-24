@@ -68,3 +68,45 @@ class RiotAPI():
                     match.summoner.add(summoner)
         else:
             print(f"Erro na requisição: {response.status_code}")
+
+
+    def search_puuid_by_gamename(self, gameName, tagLine):
+        base_url = f'https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}'
+
+        params = {"api_key": self.api_key}
+
+        response = requests.get(base_url, params=params)
+
+        if response.status_code == 200:
+            data = response.json()
+            puuid = data['puuid']
+        else:
+            puuid =  None
+
+        return {'puuid': puuid, 'status_code': response.status_code}
+        
+    
+    def search_summoner_data(self, puuid):
+        base_url = f'https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}'
+
+        params = {"api_key": self.api_key}
+
+        response = requests.get(base_url, params=params)
+
+        if response.status_code == 200:
+            data = response.json()
+            data = {
+                'summonerID': data['id'],
+                'iconID': data['profileIconId'],
+                'summonerLevel': data['summonerLevel'],
+                'status_code': response.status_code
+            }
+        else:
+            data = {
+                'summonerID': None,
+                'iconID': None,
+                'summonerLevel': None,
+                'status_code': response.status_code
+            }
+
+        return data
