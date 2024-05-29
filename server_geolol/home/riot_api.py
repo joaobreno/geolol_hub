@@ -8,6 +8,7 @@ class RiotAPI():
     def __init__(self):
         server_settings = AdminSet.objects.all().first()
         self.api_key = server_settings.riot_api_key
+        self.patch = server_settings.current_patch
 
     def _decorator_exception(func):
         def _decorated(self, *args, **kwargs):

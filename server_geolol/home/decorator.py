@@ -17,7 +17,8 @@ def profile_user_data(func):
 
         context_dict = {'user': request.user,
                         'icon': invocador.profile_icon,    
-                        'api_key': admin_set.riot_api_key}
+                        'api_key': admin_set.riot_api_key,
+                        'current_patch': admin_set.current_patch}
         
         if settings.DEBUG == True:
             return func(request, context_dict, *args, **kwargs)

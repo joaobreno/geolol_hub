@@ -49,7 +49,7 @@ def get_summoner_info_register(request):
         
         return JsonResponse({'summoner': summoner,
                              'status_code': data_summoner['status_code'],
-                             'data_result': render_to_string("summoner-modal-result.html", {'summoner': summoner })})
+                             'data_result': render_to_string("summoner-modal-result.html", {'summoner': summoner, 'current_patch': riot_api.patch })})
 
     else:
         return JsonResponse({'summoner': None,
@@ -154,7 +154,7 @@ class SummonerMatch:
         self.gameDuration = data['info']['gameDuration']
         self.queueId = data['info']['queueId']
         self.id = match.id
-
+        self.matchPatch = match.gameVersion
 
 
     def str_gameDuration(self):
@@ -203,6 +203,11 @@ class SummonerMatch:
         time = self.gameEndTime - self.gameStartTime
         cs = self.mainSummoner['totalMinionsKilled'] / (time.seconds / 60)
         return '{:.1f}'.format(cs)
+    
+    def patch_media(self):
+        correction = self.matchPatch.split('.')
+        matchPatchVersion = f"{correction[0]}.{correction[1]}.1"
+        return matchPatchVersion
 
     def correction_api_gg_endpoints(self, data):
         if data['championName'] == 'FiddleSticks':
