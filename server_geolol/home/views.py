@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import *
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
@@ -39,18 +40,19 @@ def get_summoner_info_register(request):
 
     if data_puuid['status_code'] == 200:
         data_summoner = riot_api.search_summoner_data(data_puuid['puuid'])
-        return JsonResponse({'gamename': gamename, 
-                             'tagline': tagline,
-                             'puuid': data_puuid['puuid'],
-                             'summonerID': data_summoner['summonerID'],
-                             'iconID': data_summoner['iconID'],
-                             'summonerLevel': data_summoner['summonerLevel'],
-                             'status_code': data_summoner['status_code']})
+        summoner = {'gamename': gamename,
+                    'tagline': tagline,
+                    'puuid': data_puuid['puuid'],
+                    'summonerID': data_summoner['summonerID'],
+                    'iconID': data_summoner['iconID'],
+                    'summonerLevel': data_summoner['summonerLevel']}
+        
+        return JsonResponse({'summoner': summoner,
+                             'status_code': data_summoner['status_code'],
+                             'data_result': render_to_string("summoner-modal-result.html", {'summoner': summoner })})
 
     else:
-        return JsonResponse({'gamename': gamename,
-                             'tagline': tagline,
-                             'puuid': data_puuid['puuid'],
+        return JsonResponse({'summoner': None,
                              'status_code': data_puuid['status_code']})
 
 @login_required

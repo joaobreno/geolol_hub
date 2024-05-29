@@ -43,6 +43,11 @@
         .loading-icon {
             display: none;
         }
+
+
+        .modal {
+          --bs-modal-width: 650px !important;
+        }
     </style>
 
   <main>
@@ -107,19 +112,19 @@
 
 
 
-                    <div class="modal fade" id="verticalycentered" tabindex="-1">
+                    <div class="modal fade" id="summonerSearchResult" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title">Vertically Centered</h5>
+                              <h5 class="modal-title">Summoner Found!</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
-                              Non omnis incidunt qui sed occaecati magni asperiores est mollitia. Soluta at et reprehenderit. Placeat autem numquam et fuga numquam. Tempora in facere consequatur sit dolor ipsum. Consequatur nemo amet incidunt est facilis. Dolorem neque recusandae quo sit molestias sint dignissimos.
+                            <div id="resultModalBody" class="modal-body">
+                              
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              <button type="button" class="btn btn-primary">Save changes</button>
+                              <button type="button" class="btn btn-primary">Submit</button>
                             </div>
                           </div>
                         </div>
@@ -203,7 +208,14 @@
               console.log(data);
               if(data['status_code']==404){
                 addAlert('Usuário não encontrado.')
+              } else if (data['status_code']==403){
+                addAlert('Sem acesso a API. Contate o superuser.')
+              } else if (data['status_code']==200){
+                $('#resultModalBody').html(data['data_result']);
+                var resultModal = new bootstrap.Modal(document.getElementById('summonerSearchResult'));
+                resultModal.show();
               }
+              
               revertSearchButton();
           },
           error: function (xhr, status, error) {
