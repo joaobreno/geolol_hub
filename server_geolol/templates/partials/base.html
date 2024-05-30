@@ -540,7 +540,46 @@
   <script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
   <script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
   <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script>
 
+      toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      }
+
+      function noficationMessage(status, message) {
+        const toastrTypes = {
+          success: toastr.success,
+          warning: toastr.warning,
+          error: toastr.error,
+          info: toastr.info
+        };
+
+        const toastrFunction = toastrTypes[status] || toastr.info;
+
+        const displayMessage = message || "Mensagem não fornecida.";
+
+        toastrFunction(displayMessage);
+      }
+
+
+  </script>
   <!-- Template Main JS File -->
   <script src="{% static 'assets/js/main.js' %}"></script>
 
