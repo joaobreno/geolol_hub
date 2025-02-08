@@ -222,6 +222,8 @@ def task_refresh_summoner_async(self, summoner_id):
     summoner.save()
 
     riot_api = RiotAPI()
-    riot_api.get_summoners_ranked_matches(summoner.puuid, 420)
-    riot_api.get_summoners_ranked_matches(summoner.puuid, 440)
+    status_user = riot_api.update_summoner_data(summoner.puuid)
+    status_solo_matches = riot_api.get_summoners_ranked_matches(summoner.puuid, 420)
+    status_flex_matches = riot_api.get_summoners_ranked_matches(summoner.puuid, 440)
+    
     

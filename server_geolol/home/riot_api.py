@@ -44,6 +44,7 @@ class RiotAPI():
 
         if response.status_code == 200:
             data = response.json()
+            print('X============ REQUISIÇÕES DE PARTIDAS ============X')
             for matchID in data:
                 match_lib = Matches.objects.filter(matchID=matchID)
                 if not match_lib:
@@ -67,8 +68,11 @@ class RiotAPI():
                     print('{0} already registered'.format(matchID))
                     match = match_lib.first()
                     match.summoner.add(summoner)
+            print('X============ FIM DE REQUISIÇÕES ============X')
         else:
             print(f"Erro na requisição: {response.status_code}")
+
+        return response.status_code == 200
 
 
     def search_puuid_by_gamename(self, gameName, tagLine):
@@ -111,3 +115,33 @@ class RiotAPI():
             }
 
         return data
+    
+    def update_summoner_data(self, puuid):
+        summoner = Invocador.objects.get(puuid=puuid)
+        base_url = f'https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}'
+
+        params = {"api_key": self.api_key}
+
+        response = requests.get(base_url, params=params)
+
+        if response.status_code == 200:
+            data = response.json()
+            summoner.profile_icon = data['profileIconId']
+            summoner.level = data['summonerLevel']
+            summoner.save()
+
+        return response.status_code == 200
+    
+    def update_summoner_elo_ranked_data(self, puuid):
+        summoner = Ranks.objects.get(summoner__puuid=puuid)
+        base_url = f'https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner/{puuid}'
+
+        params = {"api_key": self.api_key}
+
+        response = requests.get(base_url, params=params)
+
+        if response.status_code == 200:
+            #TODO UPDATE ELO DOS USUARIOS
+            print('ok')
+
+        return response.status_code == 200
