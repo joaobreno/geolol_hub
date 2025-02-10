@@ -30,6 +30,21 @@ class RiotAPI():
 
         return _decorated
     
+    def update_summoner_name_data(self, puuid):
+        base_url = f'https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/{puuid}'
+
+        params = {"api_key": self.api_key}
+
+        response = requests.get(base_url, params=params)
+
+        if response.status_code == 200:
+            data = response.json()
+            summoner = Invocador.objects.get(puuid=puuid)
+            summoner.nome_invocador = data['gameName']
+            summoner.tag = data['tagLine']
+            summoner.save()
+
+    
     def get_summoners_ranked_matches(self, puuid, queue):
         summoner = Invocador.objects.get(puuid=puuid)
         season = Season.objects.filter(actual=True).first()
