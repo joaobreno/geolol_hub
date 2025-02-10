@@ -132,9 +132,9 @@ class RiotAPI():
 
         return response.status_code == 200
     
-    def update_summoner_elo_ranked_data(self, puuid):
-        rank = Ranks.objects.get(summoner__puuid=puuid)
-        base_url = f'https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner/{puuid}'
+    def update_summoner_elo_ranked_data(self, summonerID):
+        rank = Ranks.objects.get(summoner__summonerId=summonerID)
+        base_url = f'https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerID}'
 
         params = {"api_key": self.api_key}
 
@@ -145,33 +145,18 @@ class RiotAPI():
             data = response.json()
             solo_queue = next((item for item in data if item['queueType'] == 'RANKED_SOLO_5x5'), None)
             flex_queue = next((item for item in data if item['queueType'] == 'RANKED_FLEX_SR'), None)
-            if data:
-                solo_queue = next((item for item in data if item.get('queueType') == 'RANKED_SOLO_5x5'), None)
-                flex_queue = next((item for item in data if item.get('queueType') == 'RANKED_FLEX_SR'), None)
 
-                defaults = {
-                    "soloqueue_tier": solo_queue.get('tier', 'UNRANKED') if solo_queue else 'UNRANKED',
-                    "soloqueue_rank": solo_queue.get('rank', '') if solo_queue else '',
-                    "soloqueue_leaguePoints": solo_queue.get('leaguePoints', 0) if solo_queue else 0,
-                    "soloqueue_wins": solo_queue.get('wins', 0) if solo_queue else 0,
-                    "soloqueue_losses": solo_queue.get('losses', 0) if solo_queue else 0,
-                    "flexqueue_tier": flex_queue.get('tier', 'UNRANKED') if flex_queue else 'UNRANKED',
-                    "flexqueue_rank": flex_queue.get('rank', '') if flex_queue else '',
-                    "flexqueue_leaguePoints": flex_queue.get('leaguePoints', 0) if flex_queue else 0,
-                    "flexqueue_wins": flex_queue.get('wins', 0) if flex_queue else 0,
-                    "flexqueue_losses": flex_queue.get('losses', 0) if flex_queue else 0,
-                }
-                rank.soloqueue_tier = defaults['soloqueue_tier']
-                rank.soloqueue_rank = defaults['soloqueue_rank']
-                rank.soloqueue_leaguePoints = defaults['soloqueue_leaguePoints']
-                rank.soloqueue_wins = defaults['soloqueue_wins']
-                rank.soloqueue_losses = defaults['soloqueue_losses']
-                rank.flexqueue_tier = defaults['flexqueue_tier']
-                rank.flexqueue_rank = defaults['flexqueue_rank']
-                rank.flexqueue_leaguePoints = defaults['flexqueue_leaguePoints']
-                rank.flexqueue_wins = defaults['flexqueue_wins']
-                rank.flexqueue_losses = defaults['flexqueue_losses']
-                rank.save()
+            rank.soloqueue_tier = solo_queue.get('tier', 'UNRANKED') if solo_queue else 'UNRANKED'
+            rank.soloqueue_rank = solo_queue.get('rank', '') if solo_queue else ''
+            rank.soloqueue_leaguePoints = solo_queue.get('leaguePoints', 0) if solo_queue else 0
+            rank.soloqueue_wins = solo_queue.get('wins', 0) if solo_queue else 0
+            rank.soloqueue_losses = solo_queue.get('losses', 0) if solo_queue else 0
+            rank.flexqueue_tier = flex_queue.get('tier', 'UNRANKED') if flex_queue else 'UNRANKED'
+            rank.flexqueue_rank = flex_queue.get('rank', '') if flex_queue else ''
+            rank.flexqueue_leaguePoints = flex_queue.get('leaguePoints', 0) if flex_queue else 0
+            rank.flexqueue_wins = flex_queue.get('wins', 0) if flex_queue else 0
+            rank.flexqueue_losses = flex_queue.get('losses', 0) if flex_queue else 0
+            rank.save()
 
 
         return response.status_code == 200

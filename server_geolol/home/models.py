@@ -41,11 +41,17 @@ class Ranks(models.Model):
     
     @property
     def solo_winrate(self):
-        return "{:.0f}%".format((self.soloqueue_wins / (self.soloqueue_losses + self.soloqueue_wins )) * 100)
+        try:
+            return "{:.0f}%".format((self.soloqueue_wins / (self.soloqueue_losses + self.soloqueue_wins )) * 100)
+        except Exception as e:
+            return "0%"
     
     @property
     def flex_winrate(self):
-        return "{:.0f}%".format((self.flexqueue_wins / (self.flexqueue_losses + self.flexqueue_wins )) * 100)
+        try:
+            return "{:.0f}%".format((self.flexqueue_wins / (self.flexqueue_losses + self.flexqueue_wins )) * 100)
+        except Exception as e:
+            return "0%"
     
 class Matches(models.Model):
     summoner = models.ManyToManyField(Invocador, related_name='+')
