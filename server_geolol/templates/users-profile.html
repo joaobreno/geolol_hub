@@ -26,7 +26,7 @@
           <h2>{{user.invocador.nome_invocador}} #{{user.invocador.tag}}</h2>
           <h3>Level {{user.invocador.level}}</h3>
           <!-- <h6>{{user.first_name}}</h6> -->
-          <button type="button" class="btn btn-info" id="refreshButton" onclick="refresh_summoner({{user.invocador.id}})" {% if block_refresh %}disabled{% endif %} >Refresh</button>
+          <button type="button" class="btn btn-info" id="refreshButton" onclick="noficationMessage(25,'Update in progress!');refresh_summoner({{user.invocador.id}})" {% if block_refresh %}disabled{% endif %} >Refresh</button>
         </div>
       </div>
 
@@ -144,10 +144,10 @@
                     >Profile Image</label
                   >
                   <div class="col-md-8 col-lg-9">
-                    <img
+                    <!-- <img
                       src="{% static 'assets/img/profile-img.jpg' %}"
                       alt="Profile"
-                    />
+                    /> -->
                     <div class="pt-2">
                       <a
                         href="#"
@@ -490,22 +490,22 @@ Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Temp
   </div>
 </section>
 
-<script type="text/javascript">
-  function refresh_summoner(id) {
-      document.getElementById('refreshButton').disabled = true;
-      $.ajax({
-          type: 'GET',
-          data: { 'id': id },
-          url: "{% url 'profile-refresh' %}",
-          success: function (data) {
-              console.log(data['response']);
-          },
-          error: function (xhr, status, error) {
-              console.error('Erro na solicitação:', status, error);
-          }
-      });
-  }
-</script>
+  <script type="text/javascript">
+    function refresh_summoner(id) {
+        document.getElementById('refreshButton').disabled = true;
+        $.ajax({
+            type: 'GET',
+            data: { 'id': id },
+            url: "{% url 'profile-refresh' %}",
+            success: function (data) {
+                console.log(data['response']);
+            },
+            error: function (xhr, status, error) {
+                console.error('Erro na solicitação:', status, error);
+            }
+        });
+    }
+  </script>
 
 
 {% endblock %}

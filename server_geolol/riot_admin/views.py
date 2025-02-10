@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import *
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.conf import settings 
 import requests
@@ -20,6 +21,7 @@ def server_settings(request, context_dict):
             admin_set.riot_api_key = form.cleaned_data['api_key']
             admin_set.save()
             redirect_url = reverse('profile')
+            messages.success(request, 'Riot API Key updated successfully!')
             return HttpResponseRedirect(redirect_url)
     else:
         form = RiotAPIKeyForm(admin=admin_set) 

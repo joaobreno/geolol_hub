@@ -543,43 +543,24 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+  <script src="{% static 'assets/js/messages.js' %}"></script>
+  
+  <!-- MENSAGENS DE NOTIFICAÇÃO -->
   <script>
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const toggleBtn = document.querySelector('.toggle-sidebar-btn');
 
-      toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "newestOnTop": false,
-        "progressBar": false,
-        "positionClass": "toast-top-right",
-        "preventDuplicates": false,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-      }
+    //     toggleBtn.click();
+    // });
 
-      function noficationMessage(status, message) {
-        const toastrTypes = {
-          success: toastr.success,
-          warning: toastr.warning,
-          error: toastr.error,
-          info: toastr.info
-        };
-
-        const toastrFunction = toastrTypes[status] || toastr.info;
-
-        const displayMessage = message || "Mensagem não fornecida.";
-
-        toastrFunction(displayMessage);
-      }
-
-
+    {% if messages %}
+      {% for message in messages %}
+          noficationMessage('{{ message.level }}','{{ message }}')
+      {% endfor %}
+    {% endif %}
   </script>
+
   <!-- Template Main JS File -->
   <script src="{% static 'assets/js/main.js' %}"></script>
 
