@@ -13,6 +13,11 @@ class RanksAdmin(admin.ModelAdmin):
 admin.site.register(Ranks, RanksAdmin)
 
 class MatchesAdmin(admin.ModelAdmin):
-    list_display = ['matchID', 'gameMode', 'gameVersion']
+    list_display = ['matchID', 'gameMode', 'gameVersion', 'season']
 
 admin.site.register(Matches, MatchesAdmin)
+
+class SeasonsAdmin(admin.ModelAdmin):
+    list_display = ['name', 'description', 'startTime', 'actual']
+
+admin.site.register(Season, SeasonsAdmin)

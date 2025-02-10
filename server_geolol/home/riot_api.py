@@ -32,11 +32,12 @@ class RiotAPI():
     
     def get_summoners_ranked_matches(self, puuid, queue):
         summoner = Invocador.objects.get(puuid=puuid)
+        season = Season.objects.filter(actual=True).first()
         base_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids'
 
         params = {
             "api_key": self.api_key,
-            "startTime": 1704067200,
+            "startTime": season.start_time_unix(),
             "queue": queue
         }
 
@@ -44,7 +45,7 @@ class RiotAPI():
 
         if response.status_code == 200:
             data = response.json()
-            print('X============ REQUISIÇÕES DE PARTIDAS ============X')
+            print('\nX============ REQUISIÇÕES DE PARTIDAS ============X')
             for matchID in data:
                 match_lib = Matches.objects.filter(matchID=matchID)
                 if not match_lib:
@@ -59,7 +60,8 @@ class RiotAPI():
                             data_json = match_response.text,
                             date=datetime.datetime.fromtimestamp(match_info['info']['gameEndTimestamp'] / 1000.0),
                             gameMode=match_info['info']['gameMode'],
-                            gameVersion=match_info['info']['gameVersion']
+                            gameVersion=match_info['info']['gameVersion'],
+                            season=season
                         )
 
                         # Adicione o Invocador à partida usando o método add()
@@ -68,7 +70,7 @@ class RiotAPI():
                     print('{0} already registered'.format(matchID))
                     match = match_lib.first()
                     match.summoner.add(summoner)
-            print('X============ FIM DE REQUISIÇÕES ============X')
+            print('X============ FIM DE REQUISIÇÕES ============X\n')
         else:
             print(f"Erro na requisição: {response.status_code}")
 

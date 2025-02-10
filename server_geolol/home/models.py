@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .utils import *
 # Create your models here.
 
 class Invocador(models.Model):
@@ -13,7 +14,6 @@ class Invocador(models.Model):
     summonerName = models.CharField(max_length=50, blank=True)
     last_updated_profile = models.DateTimeField(blank=True, null=True)
 
-    # Adicione outros atributos conforme necessário
 
     def __str__(self):
         return self.user.username
@@ -52,7 +52,21 @@ class Ranks(models.Model):
             return "{:.0f}%".format((self.flexqueue_wins / (self.flexqueue_losses + self.flexqueue_wins )) * 100)
         except Exception as e:
             return "0%"
+
+
+class Season(models.Model):
+    name = models.CharField(max_length=200, blank=True)
+    description = models.TextField(blank=True)
+    startTime = models.DateTimeField(blank=True, null=True)
+    actual = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
     
+    def start_time_unix(self):
+        return datetime_to_unix(self.startTime)
+
+
 class Matches(models.Model):
     summoner = models.ManyToManyField(Invocador, related_name='+')
 
@@ -61,6 +75,7 @@ class Matches(models.Model):
     date = models.DateTimeField(blank=True)
     gameMode = models.CharField(max_length=20, blank=True)
     gameVersion = models.CharField(max_length=20, blank=True)
+    season = models.ForeignKey(Season, on_delete=models.CASCADE, default=None, null=True)
 
     def __str__(self):
         return self.matchID
