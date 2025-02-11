@@ -1,4 +1,7 @@
-{% extends "partials/base.html" %} {% load static %} {% block content %}
+{% extends "partials/base.html" %} 
+{% load static %}
+{% block title %}Home - {{user.invocador.nome_invocador}} {% endblock %}
+{% block content %}
 
 <div class="pagetitle">
   <h1>Perfil</h1>
@@ -29,61 +32,67 @@
           <button type="button" class="btn btn-info" id="refreshButton" onclick="noficationMessage(25,'Update in progress!');refresh_summoner({{user.invocador.id}})" {% if block_refresh %}disabled{% endif %} >Refresh</button>
         </div>
       </div>
-
-      <div class="card fixed-ratio">
-        <div
-          class="card-body profile-card pt-4 d-flex flex-column"
-          style="padding-top: 15px !important"
-        >
-          <div class="row">
+      <div class="row">
+        <div class="user-ranked-div">
+          <div class="card">
             <div
-              class="card-header"
-              style="padding-top: 0px; padding-bottom: 10px"
+              class="card-body profile-card pt-4 d-flex flex-column"
+              style="padding-top: 15px !important"
             >
-              Ranqueada Solo
-            </div>
-            <div class="col-lg-5">
-              <img
-                src="{% static 'art/tiers/' %}{{ tiers.soloqueue_tier }}.png"
-              />
-            </div>
-            <div class="col-lg-7">
-              <h2>{{tiers.soloqueue_tier}} {{tiers.soloqueue_rank}}</h2>
-              <h3>{{tiers.soloqueue_leaguePoints}} LP</h3>
-              <h6>{{tiers.soloqueue_wins}}W / {{tiers.soloqueue_losses}}L</h6>
-              <h6>Winrate {{tiers.solo_winrate}}</h6>
+              <div class="row">
+                <div
+                  class="card-header"
+                  style="padding-top: 0px; padding-bottom: 10px"
+                >
+                  Ranqueada Solo
+                </div>
+                <div class="col-lg-5">
+                  <img
+                    src="{% static 'art/tiers/' %}{{ tiers.soloqueue_tier }}.png"
+                  />
+                </div>
+                <div class="col-lg-7">
+                  <h2>{{tiers.soloqueue_tier}} {{tiers.soloqueue_rank}}</h2>
+                  <h3>{{tiers.soloqueue_leaguePoints}} LP</h3>
+                  <h6>{{tiers.soloqueue_wins}}W / {{tiers.soloqueue_losses}}L</h6>
+                  <h6>Winrate {{tiers.solo_winrate}}</h6>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="card fixed-ratio">
-        <div
-          class="card-body profile-card pt-4 d-flex flex-column"
-          style="padding-top: 15px !important"
-        >
-          <div class="row">
+        <div class="user-ranked-div">
+          <div class="card">
             <div
-              class="card-header"
-              style="padding-top: 0px; padding-bottom: 10px"
+              class="card-body profile-card pt-4 d-flex flex-column"
+              style="padding-top: 15px !important"
             >
-              Ranqueada Flex
-            </div>
-            <div class="col-lg-5">
-              <img
-                src="{% static 'art/tiers/' %}{{ tiers.flexqueue_tier }}.png"
-              />
-            </div>
-            <div class="col-lg-7">
-              <h2>{{tiers.flexqueue_tier}} {{tiers.flexqueue_rank}}</h2>
-              <h3>{{tiers.flexqueue_leaguePoints}} LP</h3>
-              <h6>{{tiers.flexqueue_wins}}W / {{tiers.flexqueue_losses}}L</h6>
-              <h6>Winrate {{tiers.flex_winrate}}</h6>
+              <div class="row">
+                <div
+                  class="card-header"
+                  style="padding-top: 0px; padding-bottom: 10px"
+                >
+                  Ranqueada Flex
+                </div>
+                <div class="col-lg-5">
+                  <img
+                    src="{% static 'art/tiers/' %}{{ tiers.flexqueue_tier }}.png"
+                  />
+                </div>
+                <div class="col-lg-7">
+                  <h2>{{tiers.flexqueue_tier}} {{tiers.flexqueue_rank}}</h2>
+                  <h3>{{tiers.flexqueue_leaguePoints}} LP</h3>
+                  <h6>{{tiers.flexqueue_wins}}W / {{tiers.flexqueue_losses}}L</h6>
+                  <h6>Winrate {{tiers.flex_winrate}}</h6>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
       </div>
-    </div>
+      </div>
+      
 
     <div class="col-xl-7">
       <div class="card fixed-ratio">

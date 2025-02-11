@@ -381,7 +381,7 @@ h6 {
   z-index: 997;
   height: 60px;
   box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
-  background-color: #fff;
+  background-color: #4A90E2;
   padding-left: 20px;
   /* Toggle Sidebar Button */
   /* Search Bar */
@@ -1230,4 +1230,17 @@ h6 {
   text-align: center;
   font-size: 13px;
   color: #012970;
+}
+
+
+/*--------------------------------------------------------------
+# Others
+--------------------------------------------------------------*/
+
+@media (max-width:1200px) {
+  .user-ranked-div {
+      width: 50%;
+      flex: 0 0 auto;
+  }
+
 }
