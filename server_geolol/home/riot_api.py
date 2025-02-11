@@ -9,6 +9,7 @@ class RiotAPI():
         server_settings = AdminSet.objects.all().first()
         self.api_key = server_settings.riot_api_key
         self.patch = server_settings.current_patch
+        self.settings = server_settings
 
     def _decorator_exception(func):
         def _decorated(self, *args, **kwargs):
@@ -30,19 +31,32 @@ class RiotAPI():
 
         return _decorated
     
+    def check_status_key(self, response):
+        if response.status_code == 200:
+            return True
+        if response.status_code == 403 and self.settings.status_key:
+            self.settings.status_key = False
+            self.settings.save()
+        print(response.text) if response.status_code != 403 else None
+        return False
+    
+    
     def update_summoner_name_data(self, puuid):
         base_url = f'https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/{puuid}'
 
         params = {"api_key": self.api_key}
 
         response = requests.get(base_url, params=params)
+        proceed = self.check_status_key(response)
 
-        if response.status_code == 200:
+        if proceed:
             data = response.json()
             summoner = Invocador.objects.get(puuid=puuid)
             summoner.nome_invocador = data['gameName']
             summoner.tag = data['tagLine']
             summoner.save()
+        
+        return proceed
 
     
     def get_summoners_ranked_matches(self, puuid, queue):
@@ -57,8 +71,9 @@ class RiotAPI():
         }
 
         response = requests.get(base_url, params=params)
+        proceed = self.check_status_key(response)
 
-        if response.status_code == 200:
+        if proceed:
             data = response.json()
             print('\nX============ REQUISIÇÕES DE PARTIDAS ============X')
             for matchID in data:
@@ -89,7 +104,7 @@ class RiotAPI():
         else:
             print(f"Erro na requisição: {response.status_code}")
 
-        return response.status_code == 200
+        return proceed
 
 
     def search_puuid_by_gamename(self, gameName, tagLine):
@@ -140,14 +155,15 @@ class RiotAPI():
         params = {"api_key": self.api_key}
 
         response = requests.get(base_url, params=params)
+        proceed = self.check_status_key(response)
 
-        if response.status_code == 200:
+        if proceed:
             data = response.json()
             summoner.profile_icon = data['profileIconId']
             summoner.level = data['summonerLevel']
             summoner.save()
 
-        return response.status_code == 200
+        return proceed
     
     def update_summoner_elo_ranked_data(self, summonerID):
         rank = Ranks.objects.get(summoner__summonerId=summonerID)
@@ -156,8 +172,9 @@ class RiotAPI():
         params = {"api_key": self.api_key}
 
         response = requests.get(base_url, params=params)
+        proceed = self.check_status_key(response)
 
-        if response.status_code == 200:
+        if proceed:
             #TODO UPDATE ELO DOS USUARIOS
             data = response.json()
             solo_queue = next((item for item in data if item['queueType'] == 'RANKED_SOLO_5x5'), None)
@@ -176,4 +193,4 @@ class RiotAPI():
             rank.save()
 
 
-        return response.status_code == 200
+        return proceed

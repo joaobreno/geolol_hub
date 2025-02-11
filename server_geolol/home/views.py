@@ -58,8 +58,6 @@ def get_summoner_info_register(request):
 @login_required
 @profile_user_data
 def profile(request, context_dict):
-    # puuid = get_summoner('Bentinho','6038')
-    # data_match = get_data_match('BR1_2891213898')
     tier_data = get_object_or_404(Ranks, summoner=context_dict['user'].invocador.id)
     context_dict['tiers'] = tier_data
 
@@ -217,16 +215,19 @@ class SummonerMatch:
 
 @shared_task(name="task_refresh_summoner_async", bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 0, 'countdown': 120})
 def task_refresh_summoner_async(self, summoner_id):
+    server_settings = AdminSet.objects.all().first()
     summoner = Invocador.objects.get(pk=int(summoner_id))
     summoner.last_updated_profile = datetime.datetime.now()
     summoner.save()
-    print('REFRESH MANUAL ====> {0}'.format(summoner.nome_invocador))
 
-    riot_api = RiotAPI()
-    status_user_name = riot_api.update_summoner_name_data(summoner.puuid)
-    status_user_data = riot_api.update_summoner_data(summoner.puuid)
-    status_solo_matches = riot_api.get_summoners_ranked_matches(summoner.puuid, 420)
-    status_flex_matches = riot_api.get_summoners_ranked_matches(summoner.puuid, 440)
-    status_elo_ranked = riot_api.update_summoner_elo_ranked_data(summoner.summonerId)
+    if server_settings.status_key:
+        print('REFRESH MANUAL ====> {0}'.format(summoner.nome_invocador))
+
+        riot_api = RiotAPI()
+        status_user_name = riot_api.update_summoner_name_data(summoner.puuid)
+        status_user_data = riot_api.update_summoner_data(summoner.puuid)
+        status_solo_matches = riot_api.get_summoners_ranked_matches(summoner.puuid, 420)
+        status_flex_matches = riot_api.get_summoners_ranked_matches(summoner.puuid, 440)
+        status_elo_ranked = riot_api.update_summoner_elo_ranked_data(summoner.summonerId)
     
     

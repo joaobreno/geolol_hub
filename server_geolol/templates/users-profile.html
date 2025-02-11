@@ -29,7 +29,19 @@
           <h2>{{user.invocador.nome_invocador}} #{{user.invocador.tag}}</h2>
           <h3>Level {{user.invocador.level}}</h3>
           <!-- <h6>{{user.first_name}}</h6> -->
-          <button type="button" class="btn btn-info" id="refreshButton" onclick="noficationMessage(25,'Update in progress!');refresh_summoner({{user.invocador.id}})" {% if block_refresh %}disabled{% endif %} >Refresh</button>
+          <button type="button" class="btn btn-info" id="refreshButton" onclick="noficationMessage(25,'Update in progress!');refresh_summoner({{user.invocador.id}})"
+          {% if key_valid %}  
+            {% if not user.is_superuser %}
+              {% if block_refresh %}
+                disabled
+              {% endif %}
+            {% endif %}
+          {% else %}
+            disabled
+          {% endif %}
+            >
+            Refresh
+          </button>
         </div>
       </div>
       <div class="row">
@@ -501,7 +513,9 @@ Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Temp
 
   <script type="text/javascript">
     function refresh_summoner(id) {
-        document.getElementById('refreshButton').disabled = true;
+        {% if not user.is_superuser %}
+          document.getElementById('refreshButton').disabled = true;
+        {% endif %}
         $.ajax({
             type: 'GET',
             data: { 'id': id },
