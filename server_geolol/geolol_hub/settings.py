@@ -12,11 +12,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -24,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-a4^x2_8fy92e&^(*9zwtnkz9jiwr#t1w=!1upg9=dt_y2g_&zv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')
 
 
 # Application definition
@@ -85,10 +86,11 @@ WSGI_APPLICATION = 'geolol_hub.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'geolol',
-        'USER': 'joaobreno',
-        'PASSWORD': '180695',
-        'HOST': 'localhost'
+        'NAME': os.getenv('DB_NAME', 'geolol'),
+        'USER': os.getenv('DB_USER', 'joaobreno'),
+        'PASSWORD': os.getenv('DB_PASS', '180695'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306')
     }
 }
 
@@ -122,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'pt-Br'
 
-TIME_ZONE = 'America/Manaus'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -150,7 +152,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 LOGIN_REDIRECT_URL = '/home/profile/'
-RIOT_API_KEY = ''
 
 ICON_SPELL_DICT = {
     21: 'SummonerBarrier',
@@ -175,8 +176,8 @@ ICON_SPELL_DICT = {
 
 
 ### CELERY
-CELERY_TIMEZONE = 'America/Manaus'
+CELERY_TIMEZONE = 'America/Sao_Paulo'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
