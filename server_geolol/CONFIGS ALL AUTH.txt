@@ -1,17 +1,17 @@
 CONFIGS ALL AUTH:
 
-allauth/accounts/forms.py, line 71:
+allauth/account/forms.py, line 71:
             attrs={"placeholder": kwargs.get("label"), "class": "form-control", "id": "yourPassword"},
             
 
-allauth/accounts/forms.py, line 71:
+allauth/account/forms.py, line 91:
 class LoginForm(forms.Form):
     password = PasswordField(label=_("Password"), autocomplete="current-password", required=True)
     remember = forms.BooleanField(widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "rememberMe"}),
                                   label=_("Remember Me"),
                                   required=False)
 
-allauth/accounts/forms.py, line 121:
+allauth/account/forms.py, line 121:
                 attrs={"placeholder": _("Username"), "autocomplete": "username" , "class": "form-control", "id": "yourUsername"}       
                 
                 
