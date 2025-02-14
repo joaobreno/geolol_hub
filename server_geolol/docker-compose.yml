@@ -1,0 +1,40 @@
+version: '3.9'
+
+x-common-variables: &common-variables
+  DB_HOST: ${DB_HOST:-localhost}
+  DB_PORT: ${DB_PORT:-3306}
+  DB_USER: ${DB_USER:-root}
+  DB_PASS: ${DB_PASS:-180695}
+  DB_NAME: ${DB_NAME:-geolol}
+  REDIS_HOST: ${REDIS_HOST:-redis}
+  REDIS_HOST_PORT: ${REDIS_HOST_PORT:-6379}
+  REDIS_ENABLED: ${REDIS_ENABLED}
+  CELERY_BROKER_URL: ${CELERY_BROKER_URL:-amqp://guest:guest@localhost:5672/}
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    networks:
+      - geolol-network  
+    volumes:
+      - .:/app
+    environment: *common-variables
+
+
+  celery:
+    build: .
+    command: celery -A geolol_hub worker --loglevel=info
+    depends_on:
+      - web
+      - redis
+    networks:
+      - geolol-network
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+networks:
+  geolol-network:
+    name: geolol-network
