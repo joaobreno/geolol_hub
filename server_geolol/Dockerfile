@@ -9,6 +9,11 @@ COPY . /app
 # Instala dependências do Django e do Celery
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN apt-get update && apt-get install -y redis-server
+RUN apt-get update && apt-get install -y sudo
+RUN useradd -m -s /bin/bash geolol && echo "geolol ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER geolol
+
 # Expõe a porta do Django
 EXPOSE 8000
 
