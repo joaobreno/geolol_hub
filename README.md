@@ -7,7 +7,7 @@ Este é um projeto Django que pode ser executado localmente ou via Docker.
 ## 🚀 Rodando o projeto localmente
 
 ### 📌 Pré-requisitos
-- Python 3.10 instalado
+- Python 3.10
 - Virtualenv
 - Banco de dados MySQL rodando
 
@@ -29,15 +29,38 @@ Este é um projeto Django que pode ser executado localmente ou via Docker.
     ```bash
     pip install -r requirements.txt
     ```
+4. Configuração das Variáveis de Ambiente
+    <br>Para rodar o projeto, é necessário configurar as variáveis de ambiente no arquivo `.env`. Este arquivo deve ser criado na raiz do projeto e preenchido com as informações necessárias. Exemplo:
+    ```bash
+    # Configurações do Banco de Dados MySQL
+    DB_NAME=geolol
+    DB_USER=root
+    DB_PASS=180695
+    DB_HOST=localhost
+    DB_PORT=3306
 
-4. Execute o comando para criar os modelos obrigatórios
+    # Configurações do Redis (opcional)
+    REDIS_ENABLED=
+    CELERY_BROKER_URL=redis://localhost:6379/0
+    CELERY_RESULT_BACKEND=redis://localhost:6379/0
+
+    # Configurações do Django
+    DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+    ```
+
+5. Migração de modelos para o banco de dados
+    ```bash
+    python manage.py migrate
+    ```    
+
+6. Execução de comando para criar os modelos iniciais
     ```bash
     python manage.py first_setup
     ```
-5. Alterar arquivos do AllAuth
+7. Alterar arquivos do AllAuth
     <br>Para seguir a padronização do projeto, é necessário fazer algumas alterações manuais nos inputs utilizados do AllAuth. Para isso, é necessário alterar as linhas dispostas em **CONFIGS ALL AUTH.txt**
 
-5. Execute o servidor de desenvolvimento
+8. Execute o servidor de desenvolvimento
     ```bash
     python manage.py runserver
     ```
@@ -45,14 +68,13 @@ Este é um projeto Django que pode ser executado localmente ou via Docker.
 
 ---
 
-## 🚀 Rodando com o Docker
+## 🐳 Rodando com o Docker
 
 ### 📌 Pré-requisitos
 - Docker
 - Docker Compose
 
-#### 🐳 Como instalar o Docker e Docker Compose
-
+#### Como instalar o Docker e Docker Compose
 ##### Docker  
 Para instalar o Docker, siga o guia oficial de instalação de acordo com o seu sistema operacional:
 
@@ -83,4 +105,4 @@ Após a instalação, verifique se o Docker e o Docker Compose estão funcionand
     ```bash
     docker-compose -f docker-compose-ci.yml -f docker-compose-db.yaml -f .\docker-compose.yml up --build
     ```
-    O servidor estará rodando em http://127.0.0.1:8000/
+    Após a instação de todas as dependências, o servidor estará rodando em http://127.0.0.1:8000/
