@@ -103,6 +103,6 @@ Após a instalação, verifique se o Docker e o Docker Compose estão funcionand
 2. Execute o Docker Compose
     O projeto usa três arquivos docker-compose para diferentes configurações. Para rodar o projeto localmente com o banco de dados e todas as outras dependências, use o seguinte comando:
     ```bash
-    docker-compose -f docker-compose-ci.yml -f docker-compose-db.yaml -f .\docker-compose.yml up --build
+    docker-compose -f docker-compose.yml up --build
     ```
     Após a instação de todas as dependências, o servidor estará rodando em http://127.0.0.1:8000/
