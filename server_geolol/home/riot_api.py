@@ -10,6 +10,7 @@ class RiotAPI():
         self.api_key = server_settings.riot_api_key
         self.patch = server_settings.current_patch
         self.settings = server_settings
+        self.queue_types = {420: 'SOLO', 440: 'FLEX'}
 
     def _decorator_exception(func):
         def _decorated(self, *args, **kwargs):
@@ -75,7 +76,7 @@ class RiotAPI():
 
         if proceed:
             data = response.json()
-            print('\nX============ REQUISIÇÕES DE PARTIDAS ============X')
+            print('X============ REQUISIÇÕES DE PARTIDAS {0} ============X'.format(self.queue_types.get(queue, 'SEM IDENTIFICAÇÃO')))
             for matchID in data:
                 match_lib = Matches.objects.filter(matchID=matchID)
                 if not match_lib:
@@ -100,7 +101,7 @@ class RiotAPI():
                     print('{0} already registered'.format(matchID))
                     match = match_lib.first()
                     match.summoner.add(summoner)
-            print('X============ FIM DE REQUISIÇÕES ============X\n')
+            print('X============ FIM DE REQUISIÇÕES ============X')
         else:
             print(f"Erro na requisição: {response.status_code}")
 

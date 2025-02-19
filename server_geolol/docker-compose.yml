@@ -1,40 +1,73 @@
-version: '3.9'
-
 x-common-variables: &common-variables
-  DB_HOST: ${DB_HOST:-localhost}
+  DB_HOST: ${DB_HOST:-mysql}
   DB_PORT: ${DB_PORT:-3306}
   DB_USER: ${DB_USER:-root}
   DB_PASS: ${DB_PASS:-180695}
   DB_NAME: ${DB_NAME:-geolol}
   REDIS_HOST: ${REDIS_HOST:-redis}
   REDIS_HOST_PORT: ${REDIS_HOST_PORT:-6379}
-  REDIS_ENABLED: ${REDIS_ENABLED}
-  CELERY_BROKER_URL: ${CELERY_BROKER_URL:-amqp://guest:guest@localhost:5672/}
+  CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
+  CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-db+mysql://root:180695@mysql/celery}
 
 services:
   web:
+    restart: always
     build: .
     ports:
       - "8000:8000"
+    depends_on:
+      - mysql
+      - redis
     networks:
-      - geolol-network  
+      - geolol-network
     volumes:
       - .:/app
     environment: *common-variables
 
-
   celery:
     build: .
-    command: celery -A geolol_hub worker --loglevel=info
+    restart: always
+    environment: *common-variables
+    command: /app/entrypoint-celery.sh
     depends_on:
       - web
       - redis
     networks:
       - geolol-network
+
+  mysql:
+    image: mariadb:11.1.2
+    command: --default-authentication-plugin=mysql_native_password --expire-logs-days=2 --local-infile=1 --innodb-buffer-pool-size=2G
+    restart: always
+    ports:
+      - "3306:3306"
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      MYSQL_ROOT_PASSWORD: ${DB_PASS:-180695}
+    volumes:
+      - maria-data:/var/lib/mysql
+    networks:
+      - geolol-network
+    ulimits:
+      memlock: 262144
+
+  redis:
+    image: redis:7
+    restart: always
+    ports:
+      - "6380:6379"
+    networks:
+      - geolol-network
+    volumes:
+      - redis-data:/data
+    command:
+      - redis-server
+      - --save 60 1
+      - --loglevel warning
 
 networks:
   geolol-network:
     name: geolol-network
+
+volumes:
+  maria-data:
+  redis-data:

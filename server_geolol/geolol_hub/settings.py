@@ -175,9 +175,9 @@ ICON_SPELL_DICT = {
 }
 
 # Redis configs
-REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
-REDIS_HOST_PORT = os.getenv("REDIS_HOST_PORT", "6379")
-REDIS_ENABLED = os.getenv("REDIS_ENABLED", "False").lower() == "true"
+# REDIS_HOST = os.getenv("REDIS_HOST", "172.20.0.3")
+# REDIS_HOST_PORT = os.getenv("REDIS_HOST_PORT", "6379")
+# REDIS_ENABLED = os.getenv("REDIS_ENABLED", "False").lower() == "true"
 
 ### CELERY
 CELERY_TIMEZONE = 'America/Sao_Paulo'
