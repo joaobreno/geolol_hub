@@ -28,7 +28,7 @@ services:
     build: .
     restart: always
     environment: *common-variables
-    command: /app/entrypoint-celery.sh
+    command: celery -A geolol_hub worker --loglevel=info
     depends_on:
       - web
       - redis

@@ -3,6 +3,16 @@
 {% block title %}Home - {{user.invocador.nome_invocador}} {% endblock %}
 {% block content %}
 
+<style>
+  @media (max-width: 1200px) {
+    .container-main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+</style>
+
 <div class="pagetitle">
   <h1>Perfil</h1>
   <nav>
@@ -16,7 +26,7 @@
 
 <section class="section profile">
   <div class="row">
-    <div class="col-xl-3">
+    <div class="col-xl-3" style="min-width: 333px">
       <div class="card">
         <div
           class="card-body profile-card pt-4 d-flex flex-column align-items-center"
@@ -106,8 +116,8 @@
       </div>
       
 
-    <div class="col-xl-7">
-      <div class="card fixed-ratio">
+    <div class="col-xl-7 container-main">
+      <div class="card fixed-ratio" style="min-width: 860px;max-width: 900px;">
         <div class="card-body pt-3">
           <!-- Bordered Tabs -->
           <ul class="nav nav-tabs nav-tabs-bordered">
@@ -507,7 +517,7 @@ Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Temp
       </div>
     </div>
 
-    <div class="col-xl-3"></div>
+    <div class="col-xl-2"></div>
   </div>
 </section>
 

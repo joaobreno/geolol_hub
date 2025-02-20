@@ -122,13 +122,17 @@
                             <div id="resultModalBody" class="modal-body">
                               
                             </div>
+                            {{ form.puuid }}
+                            {{ form.summonerID }}
+                            {{ form.profileIcon }}
+                            {{ form.level }}
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              <button type="button" class="btn btn-primary">Submit</button>
+                              <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
                           </div>
                         </div>
-                    </div><!-- End Vertically centered Modal-->
+                    </div>
 
                   </form>
 
@@ -210,7 +214,14 @@
                 addAlert('Usuário não encontrado.')
               } else if (data['status_code']==403){
                 addAlert('Sem acesso a API. Contate o superuser.')
+              } else if (data['status_code']==405){
+                addAlert('Já existe um usuário relacionado com esse invocador. Tente outra conta.')
               } else if (data['status_code']==200){
+                $('#id_puuid').val(data['summoner']['puuid']);
+                $('#id_summonerID').val(data['summoner']['summonerID']);
+                $('#id_profileIcon').val(data['summoner']['iconID']);
+                $('#id_level').val(data['summoner']['summonerLevel']);
+
                 $('#resultModalBody').html(data['data_result']);
                 var resultModal = new bootstrap.Modal(document.getElementById('summonerSearchResult'));
                 resultModal.show();

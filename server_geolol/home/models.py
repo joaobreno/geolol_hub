@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from .utils import *
 # Create your models here.
 
@@ -13,6 +13,7 @@ class Invocador(models.Model):
     level = models.IntegerField(blank=True, default=0)
     summonerName = models.CharField(max_length=50, blank=True)
     last_updated_profile = models.DateTimeField(blank=True, null=True)
+    admin_authorized = models.BooleanField(default=False)
 
 
     def __str__(self):

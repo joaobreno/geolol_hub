@@ -28,13 +28,53 @@ def index(request):
 
 @login_required
 def register_summoner(request):
-    form = RegisterSummonerForm()
-    return render(request, 'register-summoner.html', {'form': form})
+    if request.method == 'POST':
+        form = RegisterSummonerForm(request.POST)
+        if form.is_valid():
+            ## Criando Invocador para o Usuário
+            invocador, createdSummoner = Invocador.objects.update_or_create(
+                user=request.user,
+                defaults={
+                    "nome_invocador": form.cleaned_data['summoner_name'],
+                    "tag": form.cleaned_data['tagline'],
+                    "puuid": form.cleaned_data['puuid'],
+                    "summonerId": form.cleaned_data['summonerID'],
+                    "profile_icon": form.cleaned_data['profileIcon'],
+                    "level": form.cleaned_data['level'],
+                    "summonerName": form.cleaned_data['summoner_name'],
+                }
+            )
+
+            # Criando Rank para o Invocador
+            rank, createdRank = Ranks.objects.update_or_create(
+                summoner=invocador,
+                defaults={
+                    "soloqueue_tier": 'UNRANKED',
+                    "soloqueue_rank": '',
+                    "soloqueue_leaguePoints": 0,
+                    "soloqueue_wins": 0,
+                    "soloqueue_losses": 0,
+
+                    "flexqueue_tier": 'UNRANKED',
+                    "flexqueue_rank": '',
+                    "flexqueue_leaguePoints": 0,
+                    "flexqueue_wins": 0,
+                    "flexqueue_losses": 0,
+                }
+            )
+            return redirect("profile") 
+    else:
+        form = RegisterSummonerForm()
+        return render(request, 'register-summoner.html', {'form': form})
 
 def get_summoner_info_register(request):
     gamename = request.GET.get('gamename')
     tagline = request.GET.get('tagline')
 
+    summoner_registered = Invocador.objects.filter(nome_invocador=gamename,tag=tagline)
+    if summoner_registered:
+        return JsonResponse({'summoner': None,
+                             'status_code': 405})
     riot_api = RiotAPI()
     data_puuid = riot_api.search_puuid_by_gamename(gamename, tagline)
 
@@ -68,9 +108,12 @@ def profile(request, context_dict):
         matches_data.append(SummonerMatch(match.matchID, context_dict['user'].invocador.puuid))
 
     last_update = context_dict['user'].invocador.last_updated_profile
-    current_time = timezone.now()
-    gap_time = current_time - last_update
-    context_dict['block_refresh'] = gap_time <= timedelta(minutes=2)
+    if last_update:
+        current_time = timezone.now()
+        gap_time = current_time - last_update
+        context_dict['block_refresh'] = gap_time <= timedelta(minutes=2)
+    else:
+        context_dict['block_refresh'] = False
 
     context_dict['matches'] = matches_data
 

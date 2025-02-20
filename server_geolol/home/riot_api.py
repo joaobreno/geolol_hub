@@ -68,7 +68,8 @@ class RiotAPI():
         params = {
             "api_key": self.api_key,
             "startTime": season.start_time_unix(),
-            "queue": queue
+            "queue": queue,
+            "count": 100
         }
 
         response = requests.get(base_url, params=params)

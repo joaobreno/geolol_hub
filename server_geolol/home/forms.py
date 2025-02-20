@@ -12,5 +12,27 @@ class RegisterSummonerForm(forms.Form):
         required=True,
         max_length=5
     )
-
     
+    puuid = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=False,
+        max_length=100
+    )
+
+    summonerID = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=False,
+        max_length=100 
+    )
+
+    profileIcon = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=False,
+        max_length=10  
+    )
+
+    level = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=False,
+        max_length=10 
+    )
