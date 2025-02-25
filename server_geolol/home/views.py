@@ -3,6 +3,7 @@ from django.template.loader import render_to_string
 from django.urls import *
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings 
 from datetime import timedelta
 from django.utils import timezone
@@ -98,29 +99,36 @@ def get_summoner_info_register(request):
 @login_required
 @profile_user_data
 def profile(request, context_dict):
-    tier_data = get_object_or_404(Ranks, summoner=context_dict['user'].invocador.id)
+    tier_data = get_object_or_404(Ranks, summoner=request.user.invocador.id)
     context_dict['tiers'] = tier_data
 
+    # Paginação dos matches
+    matches_list = Matches.objects.filter(summoner=request.user.invocador.id).order_by('-date')
+    paginator = Paginator(matches_list, 10)
+    page = request.GET.get('page', 1)
 
-    matches = Matches.objects.filter(summoner=context_dict['user'].invocador.id).order_by('-date')
-    matches_data = []
-    for match in matches:
-        matches_data.append(SummonerMatch(match.matchID, context_dict['user'].invocador.puuid))
+    try:
+        matches = paginator.page(page)
+    except PageNotAnInteger:
+        matches = paginator.page(1)
+    except EmptyPage:
+        matches = paginator.page(paginator.num_pages)
 
-    last_update = context_dict['user'].invocador.last_updated_profile
+    # Processamento dos dados dos matches
+    matches_data = [SummonerMatch(match.matchID, request.user.invocador.puuid) for match in matches]
+    context_dict['matches'] = matches_data
+    context_dict['page_obj'] = matches
+
+    # Bloqueio de atualização
+    last_update = request.user.invocador.last_updated_profile
     if last_update:
-        current_time = timezone.now()
-        gap_time = current_time - last_update
-        context_dict['block_refresh'] = gap_time <= timedelta(minutes=2)
+        context_dict['block_refresh'] = (timezone.now() - last_update) <= timedelta(minutes=2)
     else:
         context_dict['block_refresh'] = False
 
-    context_dict['matches'] = matches_data
-
-    ### Teste
+    # Teste de Hash
     data = "joaobreno"
-    hash_object = hashlib.sha256(data.encode())
-    hex_dig = hash_object.hexdigest()
+    context_dict['hash_value'] = hashlib.sha256(data.encode()).hexdigest()
 
     return render(request, 'users-profile.html', context_dict)
 

@@ -130,7 +130,7 @@
                 Overview
               </button>
             </li>
-
+<!-- 
             <li class="nav-item">
               <button
                 class="nav-link"
@@ -159,9 +159,15 @@
               >
                 Change Password
               </button>
-            </li>
+            </li> -->
           </ul>
           <div class="tab-content pt-2">
+            <div class="row">
+              <div class="col-6"></div>
+              <div class="col-6">
+                {% include 'pagination-component.html' %}
+              </div>
+            </div>
             
             {% include 'profile-matches-section.html' %}
 
