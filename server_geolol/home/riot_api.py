@@ -1,6 +1,7 @@
 import requests
 from riot_admin.models import AdminSet
 from .models import *
+from .enums import *
 import pytz
 import datetime
 import time
@@ -117,6 +118,9 @@ class RiotAPI():
                                 date=datetime.datetime.fromtimestamp(match_info['info']['gameEndTimestamp'] / 1000.0),
                                 gameMode=match_info['info']['gameMode'],
                                 gameVersion=match_info['info']['gameVersion'],
+                                queueType=match_info['info']['queueId'],
+                                matchFinish=match_info['info']['participants'][0]['gameEndedInEarlySurrender'],
+                                gameDuration=match_info['info']['gameDuration'],
                                 season=season
                             )
 

@@ -76,7 +76,58 @@ class Matches(models.Model):
     date = models.DateTimeField(blank=True)
     gameMode = models.CharField(max_length=20, blank=True)
     gameVersion = models.CharField(max_length=20, blank=True)
+    queueType = models.IntegerField(blank=True, default=1)
+    matchFinish = models.BooleanField(default=True)
+    gameDuration = models.IntegerField(blank=True, default=0)
     season = models.ForeignKey(Season, on_delete=models.CASCADE, default=None, null=True)
 
     def __str__(self):
         return self.matchID
+    
+# class SummonerDataMatch(models.Model):
+#     summoner = models.ForeignKey(Invocador, on_delete=models.CASCADE)
+#     match = models.ForeignKey(Matches, on_delete=models.CASCADE)
+#     matchResult = models.CharField(max_length=10, blank=True)
+#     gameEndedInSurrender = models.BooleanField(default=False)
+
+#     ### MATCH DATA
+#     championID = models.IntegerField(blank=True)
+#     championName = models.CharField(max_length=30, blank=True)
+#     championLevel = models.IntegerField(blank=True)
+#     kills = models.IntegerField(blank=True)
+#     deaths = models.IntegerField(blank=True)
+#     assists = models.IntegerField(blank=True)
+#     kda = models.DecimalField(max_digits=20, decimal_places=2)
+#     teamPosition = models.CharField(max_length=10, blank=True)
+#     timePlayed = models.IntegerField(blank=True)
+    
+#     ### SCORE STATS
+#     doubleKills = models.IntegerField(blank=True)
+#     tripleKills = models.IntegerField(blank=True)
+#     quadraKills = models.IntegerField(blank=True)
+#     pentaKills = models.IntegerField(blank=True)
+#     firstBloodKill = models.BooleanField(default=False)
+#     firstTowerKill = models.BooleanField(default=False)
+#     killingSprees = models.IntegerField(blank=True)
+#     goldEarned = models.IntegerField(blank=True)
+#     objectivesStolen = models.IntegerField(blank=True)
+#     damageDealtToBuildings = models.IntegerField(blank=True)
+#     damageDealtToObjectives = models.IntegerField(blank=True)
+#     damageDealtToTurrets = models.IntegerField(blank=True)
+#     damageSelfMitigated = models.IntegerField(blank=True)
+#     totalDamageShieldedOnTeammates = models.IntegerField(blank=True)
+#     totalHeal = models.IntegerField(blank=True)
+#     totalHealsOnTeammates = models.IntegerField(blank=True)
+#     physicalDamageDealtToChampions = models.IntegerField(blank=True)
+#     magicDamageDealtToChampions = models.IntegerField(blank=True)
+#     totalDamageDealt = models.IntegerField(blank=True)
+#     totalDamageDealtToChampions = models.IntegerField(blank=True)
+#     totalDamageTaken = models.IntegerField(blank=True)
+#     turretKills = models.IntegerField(blank=True)
+#     timeCCingOthers = models.IntegerField(blank=True)
+#     teamBaronKills = models.IntegerField(blank=True)
+
+#     ### OTHER STATS
+#     skillshotsDodged = models.IntegerField(blank=True)
+#     skillshotsHit = models.IntegerField(blank=True)
+

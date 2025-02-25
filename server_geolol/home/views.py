@@ -12,6 +12,7 @@ from .forms import *
 import requests
 from .decorator import *
 from .models import *
+from .enums import *
 import cassiopeia as cass
 import arrow
 import datetime
@@ -288,8 +289,8 @@ def task_refresh_summoner_async(self, summoner_id):
         riot_api = RiotAPI()
         status_user_name = riot_api.update_summoner_name_data(summoner.puuid)
         status_user_data = riot_api.update_summoner_data(summoner.puuid)
-        status_solo_matches = riot_api.get_summoners_ranked_matches(summoner.puuid, 420)
-        status_flex_matches = riot_api.get_summoners_ranked_matches(summoner.puuid, 440)
+        status_solo_matches = riot_api.get_summoners_ranked_matches(summoner.puuid, Queue.SOLO.value)
+        status_flex_matches = riot_api.get_summoners_ranked_matches(summoner.puuid, Queue.FLEX.value)
         status_elo_ranked = riot_api.update_summoner_elo_ranked_data(summoner.summonerId)
     
     
