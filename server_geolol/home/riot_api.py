@@ -1,7 +1,9 @@
 import requests
 from riot_admin.models import AdminSet
 from .models import *
+import pytz
 import datetime
+import time
 
 
 class RiotAPI():
@@ -63,49 +65,73 @@ class RiotAPI():
     def get_summoners_ranked_matches(self, puuid, queue):
         summoner = Invocador.objects.get(puuid=puuid)
         season = Season.objects.filter(actual=True).first()
+
+        start_time = season.start_time_unix()
+
+        sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
+        now_saopaulo = datetime.datetime.now(sao_paulo_tz)
+        end_time = datetime_to_unix(now_saopaulo)
+
         base_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids'
 
-        params = {
-            "api_key": self.api_key,
-            "startTime": season.start_time_unix(),
-            "queue": queue,
-            "count": 100
-        }
+        # Iterar semanalmente
+        current_time = start_time
+        one_week = 7 * 24 * 60 * 60  # 1 semana em segundos
 
-        response = requests.get(base_url, params=params)
-        proceed = self.check_status_key(response)
+        print('X=================== REQUISIÇÕES DE PARTIDAS {0} ===================X'.format(self.queue_types.get(queue, 'SEM IDENTIFICAÇÃO')))
+        while current_time < end_time:
+            next_time = min(current_time + one_week, end_time)
 
-        if proceed:
-            data = response.json()
-            print('X============ REQUISIÇÕES DE PARTIDAS {0} ============X'.format(self.queue_types.get(queue, 'SEM IDENTIFICAÇÃO')))
-            for matchID in data:
-                match_lib = Matches.objects.filter(matchID=matchID)
-                if not match_lib:
-                    match_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/{matchID}?api_key={self.api_key}'
-                    match_response = requests.get(match_url)
-                    if match_response.status_code == 200:
-                        print('{0} request status={1}'.format(matchID, match_response.status_code))
-                        match_info = match_response.json()
+            params = {
+                "api_key": self.api_key,
+                "startTime": current_time,
+                "endTime": next_time,
+                "queue": queue,
+                "count": 100
+            }
 
-                        match = Matches.objects.create(
-                            matchID=matchID,
-                            data_json = match_response.text,
-                            date=datetime.datetime.fromtimestamp(match_info['info']['gameEndTimestamp'] / 1000.0),
-                            gameMode=match_info['info']['gameMode'],
-                            gameVersion=match_info['info']['gameVersion'],
-                            season=season
-                        )
+            response = requests.get(base_url, params=params)
+            time.sleep(2)
+            proceed = self.check_status_key(response)
 
-                        # Adicione o Invocador à partida usando o método add()
+            if proceed:
+                data = response.json()
+                print('|| TIME GAP ({0} - {1}) ||'.format(
+                    datetime.datetime.fromtimestamp(current_time, sao_paulo_tz),
+                    datetime.datetime.fromtimestamp(next_time, sao_paulo_tz)
+                ))
+
+                for matchID in data:
+                    match_lib = Matches.objects.filter(matchID=matchID)
+                    if not match_lib:
+                        match_url = f'https://americas.api.riotgames.com/lol/match/v5/matches/{matchID}?api_key={self.api_key}'
+                        match_response = requests.get(match_url)
+                        time.sleep(0.5)
+                        if match_response.status_code == 200:
+                            print('{0} request status={1}'.format(matchID, match_response.status_code))
+                            match_info = match_response.json()
+
+                            match = Matches.objects.create(
+                                matchID=matchID,
+                                data_json=match_response.text,
+                                date=datetime.datetime.fromtimestamp(match_info['info']['gameEndTimestamp'] / 1000.0),
+                                gameMode=match_info['info']['gameMode'],
+                                gameVersion=match_info['info']['gameVersion'],
+                                season=season
+                            )
+
+                            match.summoner.add(summoner)
+                    else:
+                        print('{0} already registered'.format(matchID))
+                        match = match_lib.first()
                         match.summoner.add(summoner)
-                else:
-                    print('{0} already registered'.format(matchID))
-                    match = match_lib.first()
-                    match.summoner.add(summoner)
-            print('X============ FIM DE REQUISIÇÕES ============X')
-        else:
-            print(f"Erro na requisição: {response.status_code}")
+                print('----------------------------------------------------------------------')
 
+            else:
+                print(f"Erro na requisição: {response.status_code}")
+            current_time = next_time
+
+        print('X======================== FIM DE REQUISIÇÕES ========================X\n')
         return proceed
 
 

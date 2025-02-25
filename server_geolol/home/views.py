@@ -164,7 +164,10 @@ def get_summoner(summoner_name, summoner_tag):
 
 
 def refresh_summoner(request):
-    task_refresh_summoner_async.delay(request.GET.get('id'))
+    if settings.CELERY_ASYNC_FUNCTIONS_DEBUG:
+        task_refresh_summoner_async.delay(request.GET.get('id'))
+    else:
+        task_refresh_summoner_async(request.GET.get('id'))
     return JsonResponse({'response': datetime.datetime.now()})
 
 
