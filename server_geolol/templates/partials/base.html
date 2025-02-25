@@ -28,6 +28,7 @@
   <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
 
   <!-- Template Main CSS File -->
+  <link href="{% static 'assets/css/preloader.css' %}" rel="stylesheet">
   <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
   <link href="{% static 'assets/css/style2.css' %}" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -35,6 +36,17 @@
 </head>
 
 <body style="min-width: 1080px;">
+
+  <div id="preloader-active">
+    <div class="preloader d-flex align-items-center justify-content-center">
+        <div class="preloader-inner position-relative">
+            <div class="preloader-circle"></div>
+            <div class="preloader-img pere-text">
+                <img src="{% static 'landpage_assets/img/logo.png' %}" alt="">
+            </div>
+        </div>
+    </div>
+  </div>
 
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
@@ -541,11 +553,14 @@
   
   <!-- MENSAGENS DE NOTIFICAÇÃO -->
   <script>
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     const toggleBtn = document.querySelector('.toggle-sidebar-btn');
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.querySelector('.toggle-sidebar-btn');
 
-    //     toggleBtn.click();
-    // });
+        toggleBtn.click();
+        setTimeout(function() {
+          $('#preloader-active').fadeOut();
+        }, 1500);
+    });
 
     {% if messages %}
       {% for message in messages %}
