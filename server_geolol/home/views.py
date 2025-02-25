@@ -204,8 +204,16 @@ class SummonerMatch:
         return f"{minutes}:{seconds:02d}"
     
     def str_match_timeago(self):
-        time = datetime.datetime.now() - self.gameEndTime
-        return time.days
+        time_elapsed = datetime.datetime.now() - self.gameEndTime
+
+        if time_elapsed.days >= 1:
+            return f"{time_elapsed.days} {'dia' if time_elapsed.days == 1 else 'dias'}"
+        elif time_elapsed.seconds >= 3600:
+            hours = time_elapsed.seconds // 3600
+            return f"{hours} {'hora' if hours == 1 else 'horas'}"
+        else:
+            minutes = time_elapsed.seconds // 60
+            return f"{minutes} {'minuto' if minutes == 1 else 'minutos'}"
     
     def str_gameResult(self):
         if not self.remakeStatus:
