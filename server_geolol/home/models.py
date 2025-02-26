@@ -85,9 +85,9 @@ class Matches(models.Model):
         return self.matchID
     
 class SummonerDataMatch(models.Model):
-    summoner = models.ForeignKey(Invocador, on_delete=models.CASCADE)
+    summoner = models.ForeignKey(Invocador, related_name='matches_data', on_delete=models.CASCADE)
     riotIdGameName = models.CharField(max_length=30, blank=True)
-    match = models.ForeignKey(Matches, on_delete=models.CASCADE)
+    match = models.ForeignKey(Matches, related_name='summoners_related', on_delete=models.CASCADE)
     matchResult = models.CharField(max_length=10, blank=True)
     gameEndedInSurrender = models.BooleanField(default=False)
     remake = models.BooleanField(default=False)
@@ -150,7 +150,6 @@ class SummonerDataMatch(models.Model):
     ### VISION STATS
     visionScore = models.IntegerField(blank=True)
     visionWardsBoughtInGame = models.IntegerField(blank=True)
-    visionScore = models.IntegerField(blank=True)
     wardsKilled = models.IntegerField(blank=True)
     wardsPlaced = models.IntegerField(blank=True)
     detectorWardsPlaced = models.IntegerField(blank=True)

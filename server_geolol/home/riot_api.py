@@ -5,6 +5,7 @@ from .enums import *
 import pytz
 import datetime
 import time
+import json
 
 
 class RiotAPI():
@@ -129,6 +130,85 @@ class RiotAPI():
                         print('{0} already registered'.format(matchID))
                         match = match_lib.first()
                         match.summoner.add(summoner)
+
+                    summoner_match_data_lib = SummonerDataMatch.objects.filter(match=match,summoner=summoner)
+                    if not summoner_match_data_lib:
+                        data = json.loads(match.data_json)
+                        user_target = None
+                        for index, participant in enumerate(data['info']['participants']):
+                            if participant['puuid'] == summoner.puuid:
+                                user_target = participant
+                                break
+                        if user_target:
+                            match = SummonerDataMatch.objects.create(
+                                summoner=summoner,
+                                riotIdGameName=user_target['riotIdGameName'],
+                                match=match,
+                                matchResult=('win' if user_target['win'] else 'lose'),
+                                gameEndedInSurrender=user_target['gameEndedInSurrender'],
+                                remake=user_target['gameEndedInEarlySurrender'],
+                                championID=user_target['championId'],
+                                championName=user_target['championName'],
+                                championLevel=user_target['champLevel'],
+                                kills=user_target['kills'],
+                                deaths=user_target['deaths'],
+                                assists=user_target['assists'],
+                                kda=user_target['challenges']['kda'],
+                                teamPosition=user_target['lane'],
+                                timePlayed=user_target['timePlayed'],
+                                item0=user_target['item0'],
+                                item1=user_target['item1'],
+                                item2=user_target['item2'],
+                                item3=user_target['item3'],
+                                item4=user_target['item4'],
+                                item5=user_target['item5'],
+                                item6=user_target['item6'],
+                                doubleKills=user_target['doubleKills'],
+                                tripleKills=user_target['tripleKills'],
+                                quadraKills=user_target['quadraKills'],
+                                pentaKills=user_target['pentaKills'],
+                                firstBloodKill=user_target['firstBloodKill'],
+                                firstTowerKill=user_target['firstTowerKill'],
+                                largestKillingSpree=user_target['largestKillingSpree'],
+                                largestMultiKill=user_target['largestMultiKill'],
+                                bountyLevel=user_target['bountyLevel'],
+                                quickSoloKills=user_target['challenges']['quickSoloKills'],
+                                killParticipation=user_target['challenges']['killParticipation'],
+                                damageDealtToBuildings=user_target['damageDealtToBuildings'],
+                                damageDealtToObjectives=user_target['damageDealtToObjectives'],
+                                damageDealtToTurrets=user_target['damageDealtToTurrets'],
+                                damageSelfMitigated=user_target['damageSelfMitigated'],
+                                totalDamageShieldedOnTeammates=user_target['totalDamageShieldedOnTeammates'],
+                                totalHeal=user_target['totalHeal'],
+                                totalHealsOnTeammates=user_target['totalHealsOnTeammates'],
+                                physicalDamageDealtToChampions=user_target['physicalDamageDealtToChampions'],
+                                magicDamageDealtToChampions=user_target['magicDamageDealtToChampions'],
+                                totalDamageDealt=user_target['totalDamageDealt'],
+                                totalDamageDealtToChampions=user_target['totalDamageDealtToChampions'],
+                                totalDamageTaken=user_target['totalDamageTaken'],
+                                goldEarned=user_target['goldEarned'],
+                                CS=(user_target['totalMinionsKilled']+user_target['neutralMinionsKilled']),
+                                objectivesStolen=user_target['objectivesStolen'],
+                                turretKills=user_target['turretKills'],
+                                dragonTakedowns=user_target['challenges']['dragonTakedowns'],
+                                teamBaronKills=user_target['challenges']['teamBaronKills'],
+                                visionScore=user_target['visionScore'],
+                                visionWardsBoughtInGame=user_target['visionWardsBoughtInGame'],
+                                wardsKilled=user_target['wardsKilled'],
+                                wardsPlaced=user_target['wardsPlaced'],
+                                detectorWardsPlaced=user_target['detectorWardsPlaced'],
+                                visionScorePerMinute=user_target['challenges']['visionScorePerMinute'],
+                                skillshotsDodged=user_target['challenges']['skillshotsDodged'],
+                                skillshotsHit=user_target['challenges']['skillshotsHit'],
+                                timeCCingOthers=user_target['timeCCingOthers'],
+                                QSpellCasts=user_target['spell1Casts'],
+                                WSpellCasts=user_target['spell2Casts'],
+                                ESpellCasts=user_target['spell3Casts'],
+                                UltSpellCasts=user_target['spell4Casts'],
+                                totalTimeSpentDead=user_target['totalTimeSpentDead'],
+                                longestTimeSpentLiving=user_target['longestTimeSpentLiving']
+                            )
+                    
                 print('----------------------------------------------------------------------')
 
             else:
