@@ -260,9 +260,13 @@ class SummonerMatch:
         kp = ((self.mainKDA['kills'] + self.mainKDA['assists']) / (team['data']['objectives']['champion']['kills'] if team['data']['objectives']['champion']['kills'] != 0 else 1)) * 100
         return '{:.0f}%'.format(kp)
     
+    def total_cs_qty(self):
+        cs = self.mainSummoner['totalMinionsKilled'] + self.mainSummoner['neutralMinionsKilled']
+        return '{:.0f}'.format(cs)
+
     def cs_per_minute(self):
         time = self.gameEndTime - self.gameStartTime
-        cs = self.mainSummoner['totalMinionsKilled'] / (time.seconds / 60)
+        cs = int(self.total_cs_qty()) / (time.seconds / 60)
         return '{:.1f}'.format(cs)
     
     def patch_media(self):
