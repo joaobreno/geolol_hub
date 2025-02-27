@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'home',
     'riot_admin',
     'backoffice',
+    'charts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

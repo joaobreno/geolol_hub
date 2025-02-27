@@ -20,6 +20,7 @@ import json
 from riot_admin import models
 from .task import *
 from celery import shared_task
+from charts.models import PhantomRanks
 import hashlib
 
 # Create your views here.
@@ -46,6 +47,13 @@ def register_summoner(request):
                     "summonerName": form.cleaned_data['summoner_name'],
                 }
             )
+            # Deletando PhantomRank
+            if invocador and createdSummoner:
+                try:
+                    phantom = PhantomRanks.objects.get(puuid=invocador.puuid)
+                    phantom.delete()
+                except Invocador.DoesNotExist:
+                    phantom = None
 
             # Criando Rank para o Invocador
             rank, createdRank = Ranks.objects.update_or_create(

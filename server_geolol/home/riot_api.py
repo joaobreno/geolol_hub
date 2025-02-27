@@ -1,5 +1,6 @@
 import requests
 from riot_admin.models import AdminSet
+from collections import defaultdict
 from .models import *
 from .enums import *
 import pytz
@@ -140,7 +141,7 @@ class RiotAPI():
                                 user_target = participant
                                 break
                         if user_target:
-                            match = SummonerDataMatch.objects.create(
+                            data_summoner_match = SummonerDataMatch.objects.create(
                                 summoner=summoner,
                                 riotIdGameName=user_target['riotIdGameName'],
                                 match=match,
@@ -173,7 +174,7 @@ class RiotAPI():
                                 largestMultiKill=user_target['largestMultiKill'],
                                 bountyLevel=user_target['bountyLevel'],
                                 quickSoloKills=user_target['challenges']['quickSoloKills'],
-                                killParticipation=user_target['challenges']['killParticipation'],
+                                killParticipation=user_target['challenges'].get('killParticipation', 0),
                                 damageDealtToBuildings=user_target['damageDealtToBuildings'],
                                 damageDealtToObjectives=user_target['damageDealtToObjectives'],
                                 damageDealtToTurrets=user_target['damageDealtToTurrets'],
@@ -208,6 +209,15 @@ class RiotAPI():
                                 totalTimeSpentDead=user_target['totalTimeSpentDead'],
                                 longestTimeSpentLiving=user_target['longestTimeSpentLiving']
                             )
+
+                    else:
+                        data_summoner_match = summoner_match_data_lib.first()
+                        print('DATA MATCH => {0} ({1} - {2}/{3}/{4}) already saved.'.format(data_summoner_match.riotIdGameName,
+                                                                                            data_summoner_match.championName,
+                                                                                            data_summoner_match.kills,
+                                                                                            data_summoner_match.deaths,
+                                                                                            data_summoner_match.assists))
+                    
                     
                 print('----------------------------------------------------------------------')
 
@@ -243,11 +253,11 @@ class RiotAPI():
         response = requests.get(base_url, params=params)
 
         if response.status_code == 200:
-            data = response.json()
+            data_response = response.json()
             data = {
-                'summonerID': data['id'],
-                'iconID': data['profileIconId'],
-                'summonerLevel': data['summonerLevel'],
+                'summonerID': data_response['id'],
+                'iconID': data_response['profileIconId'],
+                'summonerLevel': data_response['summonerLevel'],
                 'status_code': response.status_code
             }
         else:
@@ -306,3 +316,68 @@ class RiotAPI():
 
 
         return proceed
+    
+
+    def get_summoner_data(self, puuid):
+        base_url = f'https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/{puuid}'
+        params = {"api_key": self.api_key}
+
+        data_result = {'result': False, 'data': {}}
+
+        try:
+            response = requests.get(base_url, params=params)
+
+            if not self.check_status_key(response):
+                data_result['data'] = {
+                    'summonerName': None,
+                    'tagLine': None,
+                    'status_code': response.status_code
+                }
+                return data_result  
+            
+            data_response = response.json()
+            data_result['result'] = True
+            data_result['data'] = {
+                'summonerName': data_response.get('gameName'),
+                'tagLine': data_response.get('tagLine'),
+                'status_code': response.status_code
+            }
+
+        except requests.exceptions.RequestException as e:
+            # Captura erros de requisição (conexão, timeout, etc.)
+            data_result['data'] = {
+                'summonerName': None,
+                'tagLine': None,
+                'status_code': None,
+                'error': str(e)
+            }
+
+        return data_result
+
+    
+    def get_elo_ranked_data(self, summonerID):
+        base_url = f'https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerID}'
+        params = {"api_key": self.api_key}
+
+        response = requests.get(base_url, params=params)
+        if not self.check_status_key(response):
+            return {'result': False, 'SOLO_DATA': {}, 'FLEX_DATA': {}}
+
+        ranked_data = response.json() or []
+        data = defaultdict(dict)
+        data['result'] = True
+
+        def extract_ranked_data(queue_type):
+            queue = next((item for item in ranked_data if item['queueType'] == queue_type), {})
+            return {
+                'tier': queue.get('tier', 'UNRANKED'),
+                'rank': queue.get('rank', ''),
+                'leaguePoints': queue.get('leaguePoints', 0),
+                'wins': queue.get('wins', 0),
+                'losses': queue.get('losses', 0),
+            }
+
+        data['SOLO_DATA'] = extract_ranked_data('RANKED_SOLO_5x5')
+        data['FLEX_DATA'] = extract_ranked_data('RANKED_FLEX_SR')
+
+        return dict(data)
