@@ -20,7 +20,7 @@ import json
 from riot_admin import models
 from .task import *
 from celery import shared_task
-from charts.models import PhantomRanks
+from charts.models import PhantomRanks, DiaryRank
 import hashlib
 
 # Create your views here.

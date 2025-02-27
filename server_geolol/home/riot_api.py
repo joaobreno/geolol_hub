@@ -2,6 +2,7 @@ import requests
 from riot_admin.models import AdminSet
 from collections import defaultdict
 from .models import *
+from charts.models import DiaryRank
 from .enums import *
 import pytz
 import datetime
@@ -313,6 +314,43 @@ class RiotAPI():
             rank.flexqueue_wins = flex_queue.get('wins', 0) if flex_queue else 0
             rank.flexqueue_losses = flex_queue.get('losses', 0) if flex_queue else 0
             rank.save()
+
+            season = Season.objects.filter(actual=True).first()
+            sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
+            date = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=sao_paulo_tz)
+            diary, diary_created = DiaryRank.objects.get_or_create(
+                summoner=rank.summoner,
+                season=season,
+                date=date,
+                defaults={
+                    'soloqueue_tier': solo_queue.get('tier', 'UNRANKED') if solo_queue else 'UNRANKED',
+                    'flexqueue_tier': flex_queue.get('tier', 'UNRANKED') if flex_queue else 'UNRANKED',
+                    'soloqueue_rank': solo_queue.get('rank', '') if solo_queue else '',
+                    'flexqueue_rank': flex_queue.get('rank', '') if flex_queue else '',
+                    'soloqueue_leaguePoints': solo_queue.get('leaguePoints', 0) if solo_queue else 0,
+                    'flexqueue_leaguePoints': flex_queue.get('leaguePoints', 0) if flex_queue else 0,
+                    'soloqueue_wins': solo_queue.get('wins', 0) if solo_queue else 0,
+                    'flexqueue_wins': flex_queue.get('wins', 0) if flex_queue else 0,
+                    'soloqueue_losses': solo_queue.get('losses', 0) if solo_queue else 0,
+                    'flexqueue_losses': flex_queue.get('losses', 0) if flex_queue else 0,
+                }
+            )
+
+            if diary_created:
+                print('Diary created successfully!')
+            else:
+                diary.soloqueue_tier = solo_queue.get('tier', 'UNRANKED') if solo_queue else 'UNRANKED'
+                diary.flexqueue_tier = flex_queue.get('tier', 'UNRANKED') if flex_queue else 'UNRANKED'
+                diary.soloqueue_rank = solo_queue.get('rank', '') if solo_queue else ''
+                diary.flexqueue_rank = flex_queue.get('rank', '') if flex_queue else ''
+                diary.soloqueue_leaguePoints = solo_queue.get('leaguePoints', 0) if solo_queue else 0
+                diary.flexqueue_leaguePoints = flex_queue.get('leaguePoints', 0) if flex_queue else 0
+                diary.soloqueue_wins = solo_queue.get('wins', 0) if solo_queue else 0
+                diary.flexqueue_wins = flex_queue.get('wins', 0) if flex_queue else 0
+                diary.soloqueue_losses = solo_queue.get('losses', 0) if solo_queue else 0
+                diary.flexqueue_losses = flex_queue.get('losses', 0) if flex_queue else 0
+                diary.save()
+                print('Diary updated successfully!')
 
 
         return proceed
