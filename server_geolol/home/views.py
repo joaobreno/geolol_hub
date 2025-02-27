@@ -8,6 +8,7 @@ from django.conf import settings
 from datetime import timedelta
 from django.utils import timezone
 from home.riot_api import *
+from home.utils import _log_console_title_section, _log_console_item_section
 from .forms import *
 import requests
 from .decorator import *
@@ -179,6 +180,13 @@ def refresh_summoner(request):
         task_refresh_summoner_async(request.GET.get('id'))
     return JsonResponse({'response': datetime.datetime.now()})
 
+def general_update_elo(request):
+    if settings.CELERY_ASYNC_FUNCTIONS_DEBUG:
+        task_update_many_summoner_async.delay()
+    else:
+        task_update_many_summoner_async()
+    return JsonResponse({'response': True})
+
 
 class SummonerMatch:
     def __init__(self, match_id, puuid):
@@ -306,3 +314,42 @@ def task_refresh_summoner_async(self, summoner_id):
         status_elo_ranked = riot_api.update_summoner_elo_ranked_data(summoner.summonerId)
     
     
+@shared_task(name="task_update_many_summoner_async", bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 0, 'countdown': 120})
+def task_update_many_summoner_async(self):
+    server_settings = AdminSet.objects.all().first()
+    user_summoners = Invocador.objects.all()
+    phantom_summoners = PhantomRanks.objects.all()
+
+    if server_settings.status_key:
+        qty = _log_console_title_section('UPDATE ELO GERAL')
+        riot_api = RiotAPI()
+        for user in user_summoners:
+            status_elo_ranked = riot_api.update_summoner_elo_ranked_data(user.summonerId)
+            _log_console_item_section(qty)
+        for phantom in phantom_summoners:
+            data_response = riot_api.get_summoner_data(phantom.puuid)
+            if data_response['result']:
+                phantom.summonerName = data_response['data']['summonerName']
+                phantom.save()
+            data_response = riot_api.search_summoner_data(phantom.puuid)
+            if data_response['iconID']:
+                phantom.profile_icon = data_response['iconID']
+                phantom.save()
+            data_result = riot_api.get_elo_ranked_data(phantom.summonerId)
+            if data_result['result']:
+                solo = data_result['SOLO_DATA']
+                flex = data_result['FLEX_DATA']
+                phantom.soloqueue_tier = solo['tier']
+                phantom.flexqueue_tier = flex['tier']
+                phantom.soloqueue_rank = solo['rank']
+                phantom.flexqueue_rank = flex['rank']
+                phantom.soloqueue_leaguePoints = solo['leaguePoints']
+                phantom.flexqueue_leaguePoints = flex['leaguePoints']
+                phantom.soloqueue_wins = solo['wins']
+                phantom.flexqueue_wins = flex['wins']
+                phantom.soloqueue_losses = solo['losses']
+                phantom.flexqueue_losses = flex['losses']
+                phantom.save()
+                print("{0} PHANTOM updated".format(phantom.summonerName))
+            _log_console_item_section(qty)
+        qty = _log_console_title_section('FIM UPDATE')

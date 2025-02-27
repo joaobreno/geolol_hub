@@ -2,6 +2,7 @@ import requests
 from riot_admin.models import AdminSet
 from collections import defaultdict
 from .models import *
+from .utils import _log_console_title_section, _log_console_item_section
 from charts.models import DiaryRank
 from .enums import *
 import pytz
@@ -82,7 +83,7 @@ class RiotAPI():
         current_time = start_time
         one_week = 7 * 24 * 60 * 60  # 1 semana em segundos
 
-        print('X=================== REQUISIÇÕES DE PARTIDAS {0} ===================X'.format(self.queue_types.get(queue, 'SEM IDENTIFICAÇÃO')))
+        qty = _log_console_title_section('REQUISIÇÕES DE PARTIDAS {0}'.format(self.queue_types.get(queue, 'SEM IDENTIFICAÇÃO')))
         while current_time < end_time:
             next_time = min(current_time + one_week, end_time)
 
@@ -218,15 +219,13 @@ class RiotAPI():
                                                                                             data_summoner_match.kills,
                                                                                             data_summoner_match.deaths,
                                                                                             data_summoner_match.assists))
-                    
-                    
-                print('----------------------------------------------------------------------')
+                _log_console_item_section(qty)
 
             else:
                 print(f"Erro na requisição: {response.status_code}")
             current_time = next_time
 
-        print('X======================== FIM DE REQUISIÇÕES ========================X\n')
+        qty = _log_console_title_section('FIM DE REQUISIÇÕES')
         return proceed
 
 
@@ -337,7 +336,7 @@ class RiotAPI():
             )
 
             if diary_created:
-                print('Diary created successfully!')
+                print('{0} Diary created successfully!'.format(rank.summoner.nome_invocador))
             else:
                 diary.soloqueue_tier = solo_queue.get('tier', 'UNRANKED') if solo_queue else 'UNRANKED'
                 diary.flexqueue_tier = flex_queue.get('tier', 'UNRANKED') if flex_queue else 'UNRANKED'
@@ -350,7 +349,7 @@ class RiotAPI():
                 diary.soloqueue_losses = solo_queue.get('losses', 0) if solo_queue else 0
                 diary.flexqueue_losses = flex_queue.get('losses', 0) if flex_queue else 0
                 diary.save()
-                print('Diary updated successfully!')
+                print('{0} Diary updated successfully!'.format(rank.summoner.nome_invocador))
 
 
         return proceed
