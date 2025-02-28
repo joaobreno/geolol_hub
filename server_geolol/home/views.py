@@ -111,9 +111,15 @@ def get_summoner_info_register(request):
 def profile(request, context_dict):
     tier_data = get_object_or_404(Ranks, summoner=request.user.invocador.id)
     context_dict['tiers'] = tier_data
+    queue_type = request.GET.get('queueType', '0')
 
     # Paginação dos matches
     matches_list = Matches.objects.filter(summoner=request.user.invocador.id).order_by('-date')
+    if int(queue_type) == Queue.SOLO.value:
+        matches_list = matches_list.filter(queueType=Queue.SOLO.value)
+    elif int(queue_type) == Queue.FLEX.value:
+        matches_list = matches_list.filter(queueType=Queue.FLEX.value)
+    context_dict['matches_qty'] = matches_list.count()
     paginator = Paginator(matches_list, 10)
     page = request.GET.get('page', 1)
 

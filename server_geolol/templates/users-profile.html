@@ -173,12 +173,11 @@
                 <div class="row mb-3">
                   <label class="col-sm-3 col-form-label" style="font-size: 14px;">Match Type</label>
                   <div class="col-sm-9">
-                    <select class="form-select" aria-label="Default select example">
-                      <option selected>Open this select menu</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
-                    </select>
+                    <select class="form-select" aria-label="Match filter" id="matchFilter" onchange="filterMatches()">
+                      <option value="0">All Matches</option>
+                      <option value="420">Solo Queue</option>
+                      <option value="440">Flex Queue</option>
+                  </select>
                   </div>
                 </div>
               </div>
@@ -188,6 +187,7 @@
             </div>
             
             {% if matches %}
+            <span style="display: inline-block; margin-bottom: 10px; color: #b0b0b0; font-style: italic;">{{matches_qty}} matches found.</span>
               {% include 'profile-matches-section.html' %}
             {% else %}
               <br>
@@ -550,6 +550,8 @@ Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Temp
 </section>
 
   <script type="text/javascript">
+    document.getElementById("matchFilter").value = "{{ request.GET.queueType|default:'0' }}";
+
     function refresh_summoner(id) {
         {% if not user.is_superuser %}
           document.getElementById('refreshButton').disabled = true;
@@ -565,6 +567,14 @@ Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Temp
                 console.error('Erro na solicitação:', status, error);
             }
         });
+    }
+
+    function filterMatches() {
+        let queueType = document.getElementById("matchFilter").value;
+        setTimeout(function() {
+          $('#preloader-active').show();
+        }, 200);
+        window.location.href = `?queueType=${queueType}`;
     }
   </script>
 
