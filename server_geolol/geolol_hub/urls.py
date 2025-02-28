@@ -23,4 +23,5 @@ urlpatterns = [
     path('admins/', include('riot_admin.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
+    path('charts/', include('charts.urls'))
 ]

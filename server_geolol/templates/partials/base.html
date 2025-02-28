@@ -15,7 +15,7 @@
   <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
@@ -32,6 +32,9 @@
   <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
   <link href="{% static 'assets/css/style2.css' %}" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet"/>
 
 </head>
 
@@ -138,18 +141,28 @@
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
-        <a class="nav-link " href="{% url 'profile' %}">
-          <i class="bi bi-person"></i>
-          <span>Profile</span>
+        {% url 'profile' as profile_url %}
+        <a class="nav-link {% if not request.path == profile_url %} collapsed {% endif %}" href="{{ profile_url }}">
+            <i class="bi bi-person"></i>
+            <span>Profile</span>
         </a>
-      </li><!-- End Profile Page Nav -->
+      </li>
+      
+      <li class="nav-item">
+        {% url 'leaderboards' as leaderboards_url %}
+        <a class="nav-link {% if not request.path == leaderboards_url %} collapsed {% endif %}" href="{{leaderboards_url}}">
+          <i class="bi bi-trophy"></i>
+          <span>Leaderboards</span>
+        </a>
+      </li>
+      <!-- End Profile Page Nav -->
 
     </ul>
 
   </aside><!-- End Sidebar-->
 
 <!-- CONTEÚDO DA PÁGINA -->
-  <main id="main" class="main">
+  <main id="{{main_class}}" class="{{main_class}}">
     {% block content %}
     {% endblock %}
   </main>

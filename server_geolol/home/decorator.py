@@ -19,7 +19,8 @@ def profile_user_data(func):
                         'icon': invocador.profile_icon,    
                         'api_key': admin_set.riot_api_key,
                         'key_valid': admin_set.status_key,
-                        'current_patch': admin_set.current_patch}
+                        'current_patch': admin_set.current_patch,
+                        'main_class': 'main'}
         
         if settings.DEBUG == True:
             return func(request, context_dict, *args, **kwargs)

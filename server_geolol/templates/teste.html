@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placar da Partida</title>
+    <style>
+        /* Configuração geral */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* Estilos dos times */
+        .team {
+            margin-bottom: 20px;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .defeat {
+            border-left: 5px solid #e74c3c;
+        }
+
+        .victory {
+            border-left: 5px solid #2ecc71;
+        }
+
+        .team-header {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        /* Tabela */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+            white-space: nowrap; /* Evita quebra de linha */
+        }
+
+        th {
+            background-color: #f4f4f4;
+            border-bottom: 2px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Ícones do campeão e nível */
+        .champion-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .champion-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
+
+        .level {
+            font-size: 12px;
+            background-color: #333;
+            color: white;
+            padding: 3px 5px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /* Itens */
+        .items {
+            display: flex;
+            justify-content: center;
+            gap: 3px;
+        }
+
+        .items img {
+            width: 25px;
+            height: 25px;
+        }
+
+        /* Destaques */
+        .mvp {
+            color: gold;
+            font-weight: bold;
+        }
+
+        .ace {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        /* Responsividade */
+        @media (max-width: 600px) {
+            th, td {
+                font-size: 12px;
+                padding: 5px;
+            }
+            .champion-icon {
+                width: 30px;
+                height: 30px;
+            }
+            .items img {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Time Vermelho (Derrota) -->
+        <div class="team defeat">
+            <div class="team-header">❌ Derrota (Time Vermelho)</div>
+            <table>
+                <tr>
+                    <th>Campeão</th>
+                    <th>Jogador</th>
+                    <th>KDA</th>
+                    <th>Dano</th>
+                    <th>Sentinelas</th>
+                    <th>CS</th>
+                    <th>Itens</th>
+                </tr>
+                <tr>
+                    <td class="champion-info">
+                        <img src="champion_icon.png" class="champion-icon" alt="Campeão">
+                        <span class="level">18</span>
+                    </td>
+                    <td class="ace">CLTT (ACE)</td>
+                    <td>25/6/13 (70%)</td>
+                    <td>95,276</td>
+                    <td>4 / 11 / 4</td>
+                    <td>332</td>
+                    <td class="items">
+                        <img src="item1.png" alt="Item">
+                        <img src="item2.png" alt="Item">
+                        <img src="item3.png" alt="Item">
+                        <img src="item4.png" alt="Item">
+                        <img src="item5.png" alt="Item">
+                        <img src="item6.png" alt="Item">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Time Azul (Vitória) -->
+        <div class="team victory">
+            <div class="team-header">🏆 Vitória (Time Azul)</div>
+            <table>
+                <tr>
+                    <th>Campeão</th>
+                    <th>Jogador</th>
+                    <th>KDA</th>
+                    <th>Dano</th>
+                    <th>Sentinelas</th>
+                    <th>CS</th>
+                    <th>Itens</th>
+                </tr>
+                <tr>
+                    <td class="champion-info">
+                        <img src="champion_icon.png" class="champion-icon" alt="Campeão">
+                        <span class="level">18</span>
+                    </td>
+                    <td class="mvp">Ninja Rosa S2S2 (MVP)</td>
+                    <td>24/9/9 (75%)</td>
+                    <td>91,376</td>
+                    <td>3 / 12</td>
+                    <td>362</td>
+                    <td class="items">
+                        <img src="item1.png" alt="Item">
+                        <img src="item2.png" alt="Item">
+                        <img src="item3.png" alt="Item">
+                        <img src="item4.png" alt="Item">
+                        <img src="item5.png" alt="Item">
+                        <img src="item6.png" alt="Item">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
