@@ -109,13 +109,15 @@ def get_summoner_info_register(request):
 
 @login_required
 @profile_user_data
-def profile(request, context_dict):
-    tier_data = get_object_or_404(Ranks, summoner=request.user.invocador.id)
+def profile(request, context_dict, id=None):
+    context_dict['visit'] = id is not None
+    context_dict['request_user'] = request.user.invocador if not id else get_object_or_404(Invocador, pk=int(id))
+    tier_data = get_object_or_404(Ranks, summoner=context_dict['request_user'].id)
     context_dict['tiers'] = tier_data
     queue_type = request.GET.get('queueType', '0')
 
     # Paginação dos matches
-    matches_list = Matches.objects.filter(summoner=request.user.invocador.id).order_by('-date')
+    matches_list = Matches.objects.filter(summoner=context_dict['request_user'].id).order_by('-date')
     if int(queue_type) == Queue.SOLO.value:
         matches_list = matches_list.filter(queueType=Queue.SOLO.value)
     elif int(queue_type) == Queue.FLEX.value:
@@ -132,12 +134,12 @@ def profile(request, context_dict):
         matches = paginator.page(paginator.num_pages)
 
     # Processamento dos dados dos matches
-    matches_data = [SummonerMatch(match.matchID, request.user.invocador.puuid) for match in matches]
+    matches_data = [SummonerMatch(match.matchID, context_dict['request_user'].puuid) for match in matches]
     context_dict['matches'] = matches_data
     context_dict['page_obj'] = matches
 
     # Bloqueio de atualização
-    last_update = request.user.invocador.last_updated_profile
+    last_update = context_dict['request_user'].last_updated_profile
     if last_update:
         context_dict['block_refresh'] = (timezone.now() - last_update) <= timedelta(minutes=2)
     else:
@@ -148,36 +150,42 @@ def profile(request, context_dict):
         'soloqueue_tier',
         'soloqueue_rank',
         'summoner__nome_invocador',
-        'summoner__profile_icon'
+        'summoner__profile_icon',
+        'summoner__id'
     ).annotate(
         summonerName=F('summoner__nome_invocador'),
         profile_icon=F('summoner__profile_icon'),
+        objectID=F('summoner__id'),
         active=Value(True, BooleanField())
     ).values(
         'soloqueue_tier',
         'soloqueue_rank',
         'summonerName',
         'profile_icon',
-        'active'
+        'active',
+        'objectID'
     ).exclude(summoner__user=context_dict['user'])
 
     phantoms = PhantomRanks.objects.all().values(
         'soloqueue_tier',
         'soloqueue_rank',
         'summonerName',
-        'profile_icon'
+        'profile_icon',
+        'id'
     ).annotate(
-        active=Value(False, BooleanField())
+        active=Value(False, BooleanField()),
+        objectID=F('id'),
     ).values(
         'soloqueue_tier',
         'soloqueue_rank',
         'summonerName',
         'profile_icon',
-        'active'
+        'active',
+        'objectID'
     )
 
     combined_ranks = list(users.union(phantoms))
-    context_dict['group_list'] = sorted(combined_ranks, key=lambda x: (-x['active'], x['summonerName']))
+    context_dict['group_list'] = sorted(combined_ranks, key=lambda x: (-x['active'], x['summonerName'], x['objectID']))
 
     # Teste de Hash
     # data = "joaobreno"

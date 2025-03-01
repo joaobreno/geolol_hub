@@ -14,13 +14,24 @@
 </style>
 
 <div class="pagetitle">
-  <h1>Profile</h1>
-  <nav>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-      <li class="breadcrumb-item active">Profile</li>
-    </ol>
-  </nav>
+  {% if not visit %}
+    <h1>Home</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">Home</li>
+        <li class="breadcrumb-item active">Profile</li>
+      </ol>
+    </nav>
+  {% else %}
+  <h1>{{request_user.nome_invocador}}</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">Home</li>
+        <li class="breadcrumb-item">Group</li>
+        <li class="breadcrumb-item active">{{request_user.nome_invocador}}</li>
+      </ol>
+    </nav>
+  {% endif %}
 </div>
 <!-- End Page Title -->
 
@@ -32,26 +43,27 @@
           class="card-body profile-card pt-4 d-flex flex-column align-items-center"
         >
           <img
-            src="https://ddragon.leagueoflegends.com/cdn/{{current_patch}}/img/profileicon/{{icon}}.png"
+            src="https://ddragon.leagueoflegends.com/cdn/{{current_patch}}/img/profileicon/{{request_user.profile_icon}}.png"
             alt="Profile"
             class="rounded-circle"
           />
-          <h2>{{user.invocador.nome_invocador}} #{{user.invocador.tag}}</h2>
-          <h3>Level {{user.invocador.level}}</h3>
-          <!-- <h6>{{user.first_name}}</h6> -->
-          <button type="button" class="btn btn-info" id="refreshButton" onclick="noficationMessage(25,'Update in progress!');refresh_summoner({{user.invocador.id}})"
-          {% if key_valid %}  
-            {% if not user.is_superuser %}
-              {% if block_refresh %}
+          <h2>{{request_user.nome_invocador}} #{{request_user.tag}}</h2>
+          <h3>Level {{request_user.level}}</h3>
+            {% if not visit or user.is_superuser %}
+              <button type="button" class="btn btn-info" id="refreshButton" onclick="noficationMessage(25,'Update in progress!');refresh_summoner({{request_user.id}})"
+              {% if key_valid %}  
+                {% if not user.is_superuser %}
+                  {% if block_refresh %}
+                    disabled
+                  {% endif %}
+                {% endif %}
+              {% else %}
                 disabled
               {% endif %}
+                >
+                Refresh
+              </button>
             {% endif %}
-          {% else %}
-            disabled
-          {% endif %}
-            >
-            Refresh
-          </button>
         </div>
       </div>
       <div class="row">

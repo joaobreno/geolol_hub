@@ -2,24 +2,21 @@
     .info-box {
         padding: 16px;
         border-radius: 8px;
-        background: #eaeaea; /* Cinza mais claro para desativados */
+        background: #eaeaea;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
     }
 
-    /* Estilos aplicados apenas se o usuário estiver ativo */
     .info-box.active {
-        background: #fff; /* Fundo branco para ativos */
+        background: #fff;
         cursor: pointer;
     }
 
-    /* Efeito ao passar o mouse (apenas se o usuário for ativo) */
     .info-box.active:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
 
-    /* Mantém a imagem arredondada e centralizada */
     .user-group-icon-container {
         display: flex;
         justify-content: center;
@@ -32,26 +29,23 @@
         border-radius: 50%;
         object-fit: cover;
         display: block;
-        pointer-events: none; /* Impede interação com a imagem */
-        user-select: none; /* Evita seleção da imagem */
+        pointer-events: none;
+        user-select: none;
     }
 
-    /* Ajuste para usuários desativados */
     .info-box:not(.active) .user-group-icon {
-        opacity: 0.5; /* Imagem mais transparente */
+        opacity: 0.5;
     }
 
     .info-box:not(.active) h3,
     .info-box:not(.active) p {
-        color: #888; /* Texto mais apagado */
+        color: #888;
     }
 
-    /* Impede seleção de texto */
     h3, p {
         user-select: none;
     }
 
-    /* Centraliza verticalmente o conteúdo de texto */
     .info-user-group {
         display: flex;
         flex-direction: column;
@@ -62,7 +56,11 @@
 <div class="row">
     {% for user in group_list %}
         <div class="col-lg-6">
-            <div class="info-box card {% if user.active %}active{% endif %}">
+            <div class="info-box card {% if user.active %}active clickable{% endif %}" 
+                 {% if user.active %} 
+                    data-id="{{ user.objectID }}" 
+                 {% endif %}
+                 onclick="redirectToProfile(this)">
                 <div class="row">
                     <div class="col-4 user-group-icon-container">
                         <img
@@ -79,3 +77,12 @@
         </div>
     {% endfor %}
 </div>
+
+<script type="text/javascript">
+    function redirectToProfile(card) {
+    if (card.classList.contains('active')) {
+        var userId = card.getAttribute('data-id');
+        window.location.href = '/home/group/user/' + userId + '/';
+    }
+}
+</script>
