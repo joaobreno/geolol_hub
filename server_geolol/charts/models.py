@@ -58,7 +58,7 @@ class PhantomRanks(models.Model):
         
 class DiaryRank(models.Model):
     summoner = models.ForeignKey(Invocador, related_name='diary_rank', on_delete=models.CASCADE)
-    date = models.DateTimeField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
     season = models.ForeignKey(Season, on_delete=models.CASCADE, default=datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0), null=True)
 
     # RANKED_SOLO_5x5

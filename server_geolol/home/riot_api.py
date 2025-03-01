@@ -157,7 +157,7 @@ class RiotAPI():
                                 deaths=user_target['deaths'],
                                 assists=user_target['assists'],
                                 kda=user_target['challenges']['kda'],
-                                teamPosition=user_target['lane'],
+                                teamPosition=user_target['individualPosition'],
                                 timePlayed=user_target['timePlayed'],
                                 item0=user_target['item0'],
                                 item1=user_target['item1'],
@@ -316,7 +316,8 @@ class RiotAPI():
 
             season = Season.objects.filter(actual=True).first()
             sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
-            date = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=sao_paulo_tz)
+            now = datetime.datetime.now(sao_paulo_tz)
+            date = now.date()
             diary, diary_created = DiaryRank.objects.get_or_create(
                 summoner=rank.summoner,
                 season=season,
