@@ -14,6 +14,8 @@ def profile_user_data(func):
             invocador = None
             return redirect("register-summoner")
         
+        if not invocador.admin_authorized:
+            return render(request, '403.html')
 
         context_dict = {'user': request.user,
                         'icon': invocador.profile_icon,    

@@ -1,8 +1,17 @@
 from django.db import models
 from home.models import Invocador, Season
+from django.contrib.auth.models import User
 import datetime
 
 # Create your models here.
+
+class LoginHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    login_date = models.DateField()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.login_date}"
+
 class PhantomRanks(models.Model):
     summonerName = models.CharField(max_length=50, blank=True)
     puuid = models.CharField(max_length=100, blank=True)

@@ -31,6 +31,7 @@
   <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
   <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
   <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/css/preloader.css' %}" rel="stylesheet">
 
   <!-- Template Main CSS File -->
   <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
@@ -51,6 +52,16 @@
     </style>
 
   <main>
+    <div id="preloader-active">
+      <div class="preloader d-flex align-items-center justify-content-center">
+          <div class="preloader-inner position-relative">
+              <div class="preloader-circle"></div>
+              <div class="preloader-img pere-text">
+                  <img src="{% static 'landpage_assets/img/logo.png' %}" alt="">
+              </div>
+          </div>
+      </div>
+    </div>
     <div class="container">
 
       <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
@@ -73,9 +84,14 @@
               <div class="card mb-3">
 
                 <div class="card-body">
+                  <div class="d-flex justify-content-end" style="padding: 10px;">
+                    <a href="{% url 'quick-logout' %}" class="text-decoration-none" title="Logout">
+                      <i class="bi bi-box-arrow-right fs-4"></i>
+                    </a>
+                  </div>
 
-                  <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">Vincule sua Conta Riot</h5>
+                  <div class="pt-4 pb-2" style="padding-top: 0 !important;">
+                    <h5 class="card-title text-center pb-0 fs-4" style="padding-top: 0;">Vincule sua Conta Riot</h5>
                     <p class="text-center small">Para acessar o GeoLoL HUB, precisamos do seu nome de usuário do LoL.</p>
                   </div>
 
@@ -128,7 +144,7 @@
                             {{ form.level }}
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary">Submit</button>
+                              <button class="btn btn-primary" id="submit-btn">Submit</button>
                             </div>
                           </div>
                         </div>
@@ -150,10 +166,38 @@
   </main><!-- End #main -->
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script type="text/javascript">
+  $('#preloader-active').fadeOut();
 
   document.getElementById('searchButton').addEventListener('click', function() {
     disableSearchButton(this);
+  });
+
+  const form = document.getElementById('register-form');
+  const submitButton = document.getElementById('submit-btn');
+
+  // Intercepta o envio do formulário
+  submitButton.addEventListener('click', function (event) {
+    event.preventDefault();
+
+    // Exibe o alerta de confirmação
+    Swal.fire({
+      title: 'Você tem certeza?',
+      text: 'Quer realmente vincular essa conta? Essa ação é permanente!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $('#preloader-active').show();
+          setTimeout(function() {
+            form.submit();
+          }, 1000);
+      }
+    });
   });
 
   function disableSearchButton(button) {
@@ -235,6 +279,8 @@
       });
     }
   </script>
+
+
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
       class="bi bi-arrow-up-short"></i></a>

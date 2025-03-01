@@ -36,6 +36,7 @@ class Command(BaseCommand):
                 'puuid': '05DFZz6OhwJxj20Oqks3YHgE0ZW4BMtmQ4bVkapPcwk5e7yQasKIKd0HSZZPgOkkCPuK5sZlecgOFQ',
                 'summonerId': '1VGy4IH2X3gpLXXpimRydF80JCipMVurCc0w80Jld2yZ7w',
                 'level': 675,
+                'admin_authorized': True
             }
         )
 

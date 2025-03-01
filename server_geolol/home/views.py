@@ -4,6 +4,7 @@ from django.urls import *
 from django.db.models import F, Value, IntegerField, BooleanField
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings 
 from datetime import timedelta
@@ -30,6 +31,9 @@ import hashlib
 def index(request):
     return render(request, 'index.html')
 
+def logout_view(request):
+    logout(request)
+    return redirect('index')
 
 @login_required
 def register_summoner(request):
