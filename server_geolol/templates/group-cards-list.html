@@ -1,0 +1,81 @@
+<style>
+    .info-box {
+        padding: 16px;
+        border-radius: 8px;
+        background: #eaeaea; /* Cinza mais claro para desativados */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+
+    /* Estilos aplicados apenas se o usuário estiver ativo */
+    .info-box.active {
+        background: #fff; /* Fundo branco para ativos */
+        cursor: pointer;
+    }
+
+    /* Efeito ao passar o mouse (apenas se o usuário for ativo) */
+    .info-box.active:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Mantém a imagem arredondada e centralizada */
+    .user-group-icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .user-group-icon {
+        max-width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        pointer-events: none; /* Impede interação com a imagem */
+        user-select: none; /* Evita seleção da imagem */
+    }
+
+    /* Ajuste para usuários desativados */
+    .info-box:not(.active) .user-group-icon {
+        opacity: 0.5; /* Imagem mais transparente */
+    }
+
+    .info-box:not(.active) h3,
+    .info-box:not(.active) p {
+        color: #888; /* Texto mais apagado */
+    }
+
+    /* Impede seleção de texto */
+    h3, p {
+        user-select: none;
+    }
+
+    /* Centraliza verticalmente o conteúdo de texto */
+    .info-user-group {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+</style>
+
+<div class="row">
+    {% for user in group_list %}
+        <div class="col-lg-6">
+            <div class="info-box card {% if user.active %}active{% endif %}">
+                <div class="row">
+                    <div class="col-4 user-group-icon-container">
+                        <img
+                            src="https://ddragon.leagueoflegends.com/cdn/{{current_patch}}/img/profileicon/{{user.profile_icon}}.png"
+                            class="user-group-icon"
+                        />
+                    </div>
+                    <div class="col-8 info-user-group">
+                        <h3>{{user.summonerName}}</h3>
+                        <p>{{user.soloqueue_tier}} {{user.soloqueue_rank}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

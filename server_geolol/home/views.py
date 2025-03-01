@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import *
+from django.db.models import F, Value, IntegerField, BooleanField
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -142,9 +143,45 @@ def profile(request, context_dict):
     else:
         context_dict['block_refresh'] = False
 
+    # Listando usuários do grupo
+    users = Ranks.objects.values(
+        'soloqueue_tier',
+        'soloqueue_rank',
+        'summoner__nome_invocador',
+        'summoner__profile_icon'
+    ).annotate(
+        summonerName=F('summoner__nome_invocador'),
+        profile_icon=F('summoner__profile_icon'),
+        active=Value(True, BooleanField())
+    ).values(
+        'soloqueue_tier',
+        'soloqueue_rank',
+        'summonerName',
+        'profile_icon',
+        'active'
+    ).exclude(summoner__user=context_dict['user'])
+
+    phantoms = PhantomRanks.objects.all().values(
+        'soloqueue_tier',
+        'soloqueue_rank',
+        'summonerName',
+        'profile_icon'
+    ).annotate(
+        active=Value(False, BooleanField())
+    ).values(
+        'soloqueue_tier',
+        'soloqueue_rank',
+        'summonerName',
+        'profile_icon',
+        'active'
+    )
+
+    combined_ranks = list(users.union(phantoms))
+    context_dict['group_list'] = sorted(combined_ranks, key=lambda x: (-x['active'], x['summonerName']))
+
     # Teste de Hash
-    data = "joaobreno"
-    context_dict['hash_value'] = hashlib.sha256(data.encode()).hexdigest()
+    # data = "joaobreno"
+    # context_dict['hash_value'] = hashlib.sha256(data.encode()).hexdigest()
 
     return render(request, 'users-profile.html', context_dict)
 
