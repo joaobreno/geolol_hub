@@ -78,6 +78,31 @@
           </a>
         </li><!-- End Search Icon-->
 
+        <li class="nav-item dropdown">
+
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-record-fill {% if key_valid %}text-success{% else %}text-danger{% endif %}"></i>
+          </a><!-- End Notification Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications" style="min-width: 380px;">
+            <li class="notification-item">
+              {% if key_valid %}
+                <i class="bi bi-check-circle text-success"></i>
+                <div>
+                  <h4>API Online</h4>
+                  <p>Funções do sistema estão habilitadas.</p>
+                </div>
+              {% else %}
+                <i class="bi bi-exclamation-circle text-danger"></i>
+                <div>
+                  <h4>API Offline</h4>
+                  <p>Contate o superuser para resolver a situação!</p>
+                </div>
+              {% endif %}
+            </li>
+          </ul>
+        </li>
+
         </li><!-- End Messages Nav -->
 
         <li class="nav-item dropdown pe-3">

@@ -150,7 +150,7 @@ def profile(request, context_dict, id=None):
         context_dict['block_refresh'] = False
 
     # Listando usuários do grupo
-    users = Ranks.objects.values(
+    users = Ranks.objects.filter(summoner__admin_authorized=True).values(
         'soloqueue_tier',
         'soloqueue_rank',
         'summoner__nome_invocador',
